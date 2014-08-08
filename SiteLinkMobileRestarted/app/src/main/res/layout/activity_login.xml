@@ -37,7 +37,8 @@
                 android:hint="@string/prompt_corpCode"
                 android:inputType="text"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:text="DEMO" />
 
             <EditText
                 android:id="@+id/locCode"
@@ -46,7 +47,8 @@
                 android:hint="@string/prompt_locCode"
                 android:inputType="text"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:text="DEMO" />
 
             <EditText
                 android:id="@+id/corpUser"
@@ -55,7 +57,8 @@
                 android:hint="@string/prompt_corpUser"
                 android:inputType="text"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:text="DEMO" />
 
             <EditText
                 android:id="@+id/password"
@@ -67,7 +70,8 @@
                 android:imeOptions="actionUnspecified"
                 android:inputType="textPassword"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:text="DEMO" />
 
             <Button
                 android:id="@+id/api_sign_in_button"

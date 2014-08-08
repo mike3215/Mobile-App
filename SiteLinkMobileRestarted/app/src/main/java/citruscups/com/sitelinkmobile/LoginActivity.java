@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Loader;
 import android.database.Cursor;
+import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.ksoap2.SoapEnvelope;
+import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.PropertyInfo;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
@@ -249,15 +251,19 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             /**
              * Attempt authentication against SiteLink API
              */
-            String NAMESPACE = "http://tempuri.org/CallCenterWs/CallCenterWs/";
+            String NAMESPACE = "http://tempuri.org/CallCenterWs/CallCenterWs";
             String METHOD_NAME = "SiteInformation";
             String URL = "https://api.smdservers.net/CCWs_3.5/CallCenterWs.asmx?WSDL";
+            String ACTION = "http://tempuri.org/CallCenterWs/CallCenterWs/SiteInformation";
 
             SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
             SoapSerializationEnvelope soapSerializationEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
             soapSerializationEnvelope.setOutputSoapObject(Request);
-            soapSerializationEnvelope.dotNet = false;
+            soapSerializationEnvelope.dotNet = true;
+            soapSerializationEnvelope.setAddAdornments(false);
+            soapSerializationEnvelope.implicitTypes = true;
 
+/*
             PropertyInfo piCorpCode = new PropertyInfo();
             piCorpCode.setType(PropertyInfo.STRING_CLASS);
             piCorpCode.setName("sCorpCode");
@@ -280,15 +286,22 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             piPassword.setType(PropertyInfo.STRING_CLASS);
             piPassword.setName("sCorpPassword");
             piPassword.setValue(mPassword);
-            Request.addProperty(piPassword);
+            Request.addProperty(piPassword);*/
+
+            Request.addProperty("sCorpCode", mCorpCode);
+            Request.addProperty("sLocationCode", mLocationCode);
+            Request.addProperty("sCorpUserName", mUsername);
+            Request.addProperty("sCorpPassword", mPassword);
 
             try {
                 HttpTransportSE httpTransportSE = new HttpTransportSE(URL);
-                httpTransportSE.debug = true;
-                httpTransportSE.call(NAMESPACE + METHOD_NAME, soapSerializationEnvelope);
-                Object objectResult = soapSerializationEnvelope.getResponse();
+                httpTransportSE.setXmlVersionTag("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 
-                Log.d("SiteLink Mobile", objectResult.toString());
+                httpTransportSE.debug = true;
+                httpTransportSE.call(ACTION, soapSerializationEnvelope );
+                SoapObject objectResult = (SoapObject)soapSerializationEnvelope.bodyIn;
+
+                Log.d("SiteLink Mobile", objectResult.getProperty(0).toString());
 
                 //Toast.makeText(getApplicationContext(), objectResult.toString(), Toast.LENGTH_LONG).show();
             } catch (Exception e) {
@@ -305,7 +318,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if(success) {
-                finish();
+                //finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
