@@ -1,4 +1,4 @@
-package citruscups.com.sitelinkmobile.activities;
+package citruscups.com.sitelinkmobile;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -20,6 +20,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Hashtable;
 
@@ -232,12 +233,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * Represents an asynchronous login/registration task used to authenticate the user
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+
         private final String mCorpCode;
         private final String mLocationCode;
         private final String mUsername;
         private final String mPassword;
-
-        private String mMessage;
 
         UserLoginTask(String corpCode, String locationCode, String username, String password) {
             mCorpCode = corpCode;
@@ -280,7 +280,6 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             Log.i("Ret", mMessage);
             if(success) {
-                /*
                 // Create an Intent to take us over to a new TenantSelectActivity
                 Intent tenantSelectActivity = new Intent(LoginActivity.this, TenantSelectActivity.class);
 
@@ -288,11 +287,15 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 //tenantSelectActivity.putExtra()
 
                 startActivity(tenantSelectActivity);
-                */
+
 
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                //mUsernameView.setError(getString(R.string.error_incorrect_username));
+                //mPasswordView.setError((getString(R.string.error_incorrect_password)));
+
+                Toast.makeText(getApplicationContext(), getString(R.string.error_incorrect_userPass), Toast.LENGTH_LONG).show();
+                mUsernameView.selectAll();
+                mUsernameView.requestFocus();
             }
         }
 
