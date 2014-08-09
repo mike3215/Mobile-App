@@ -3,5 +3,6 @@
 
     <string name="app_name">SiteLink Mobile</string>
     <string name="action_settings">Settings</string>
+    <string name="activity_tenantselect">Tenant Select</string>
 
 </resources>

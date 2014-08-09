@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -267,7 +268,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
              */
             String NAMESPACE = "http://tempuri.org/CallCenterWs/CallCenterWs";
             String URL = "https://api.smdservers.net/CCWs_3.5/CallCenterWs.asmx?WSDL";
-            String METHOD_NAME = "PromotionsRetrieve";
+            String METHOD_NAME = "SiteInformation";
             String ACTION = "http://tempuri.org/CallCenterWs/CallCenterWs/" + METHOD_NAME;
 
             HttpParams params1 = new BasicHttpParams();
@@ -296,10 +297,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 soap.append("<soap:Body>\n");
                 soap.append("<" + METHOD_NAME + " xmlns=\"" + NAMESPACE + "\">\n");
 
-                soap.append("<sCorpCode>demo</sCorpCode>\n");
-                soap.append("<sLocationCode>demo</sLocationCode>\n");
-                soap.append("<sCorpUserName>demo</sCorpUserName>\n");
-                soap.append("<sCorpPassword>demo</sCorpPassword>\n");
+                soap.append("<sCorpCode>" + mCorpCode + "</sCorpCode>\n");
+                soap.append("<sLocationCode>" + mLocationCode + "</sLocationCode>\n");
+                soap.append("<sCorpUserName>" + mUsername + "</sCorpUserName>\n");
+                soap.append("<sCorpPassword>" + mPassword + "</sCorpPassword>\n");
                 soap.append("</"+ METHOD_NAME + ">\n");
                 soap.append("</soap:Body>\n");
                 soap.append("</soap:Envelope>\n");
@@ -375,7 +376,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if(success) {
-                //finish();
+                /*
+                // Create an Intent to take us over to a new TenantSelectActivity
+                Intent tenantSelectActivity = new Intent(LoginActivity.this, TenantSelectActivity.class);
+
+                // TODO: pack away the data from the SiteInformation call
+                //tenantSelectActivity.putExtra()
+
+                startActivity(tenantSelectActivity);
+                */
+
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
