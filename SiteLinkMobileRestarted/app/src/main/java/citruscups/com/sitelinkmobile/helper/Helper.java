@@ -1,5 +1,8 @@
 package citruscups.com.sitelinkmobile.helper;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 
@@ -14,9 +17,10 @@ public class Helper
         DataTable rtTable = ds.getTableByName("RT");
         if (rtTable != null)
         {
-            if (rtTable.getRows().size() > 0)
+            ArrayList<Map<String, Object>> rows = rtTable.getRows();
+            if (rows.size() > 0)
             {
-                return Integer.parseInt((String) rtTable.getRows().get(0).get("Ret_Code"));
+                return Integer.parseInt((String) rows.get(0).get("Ret_Code"));
             }
         }
         return 0;
@@ -27,9 +31,10 @@ public class Helper
         if (dt == null) return -99;
         if (dt.getName().equals("RT"))
         {
-            if (dt.getRows().size() > 0)
+            ArrayList<Map<String, Object>> rows = dt.getRows();
+            if (rows.size() > 0)
             {
-                return (Integer) dt.getRows().get(0).get("Ret_Code");
+                return (Integer) rows.get(0).get("Ret_Code");
             }
         }
 
