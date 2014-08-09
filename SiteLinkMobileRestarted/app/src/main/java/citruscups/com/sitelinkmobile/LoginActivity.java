@@ -297,10 +297,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 soap.append("<soap:Body>\n");
                 soap.append("<" + METHOD_NAME + " xmlns=\"" + NAMESPACE + "\">\n");
 
-                soap.append("<sCorpCode>demo</sCorpCode>\n");
-                soap.append("<sLocationCode>demo</sLocationCode>\n");
-                soap.append("<sCorpUserName>demo</sCorpUserName>\n");
-                soap.append("<sCorpPassword>demo</sCorpPassword>\n");
+                soap.append("<sCorpCode>" + mCorpCode + "</sCorpCode>\n");
+                soap.append("<sLocationCode>" + mLocationCode + "</sLocationCode>\n");
+                soap.append("<sCorpUserName>" + mUsername + "</sCorpUserName>\n");
+                soap.append("<sCorpPassword>" + mPassword + "</sCorpPassword>\n");
                 soap.append("</SiteInformation>\n");
                 soap.append("</soap:Body>\n");
                 soap.append("</soap:Envelope>\n");
@@ -377,13 +377,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             if(success) {
                 /*
                 // Create an Intent to take us over to a new TenantSelectActivity
-                Intent tenantSelectActivity = new Intent(getParent(), TenantSelectActivity.class);
+                Intent tenantSelectActivity = new Intent(LoginActivity.this, TenantSelectActivity.class);
 
                 // TODO: pack away the data from the SiteInformation call
                 //tenantSelectActivity.putExtra()
 
                 startActivity(tenantSelectActivity);
                 */
+
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
