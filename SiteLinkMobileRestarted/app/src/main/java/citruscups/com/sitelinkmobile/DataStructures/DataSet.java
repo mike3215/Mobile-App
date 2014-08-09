@@ -1,4 +1,4 @@
-package citruscups.com.sitelinkmobile;
+package citruscups.com.sitelinkmobile.dataStructures;
 
 import java.util.ArrayList;
 
@@ -21,10 +21,10 @@ public class DataSet  {
     {
         if (tables == null) return null;
 
-        for (int i = 0; i < tables.size(); i++)
+        for (DataTable table : tables)
         {
-            if (tables.get(i).getName().equals(name))
-                return tables.get(i);
+            if (table.getName().equals(name))
+                return table;
         }
         return null;
     }
@@ -37,9 +37,9 @@ public class DataSet  {
     public String toString()
     {
         String result = "DataSet: ";
-        for (int i = 0; i < tables.size(); i++)
+        for (DataTable table : tables)
         {
-            result += tables.get(i).toString();
+            result += table.toString();
         }
 
         return  result;

@@ -1,11 +1,10 @@
-package citruscups.com.sitelinkmobile;
+package citruscups.com.sitelinkmobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -22,27 +21,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.protocol.HttpContext;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
+import java.util.Hashtable;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import citruscups.com.sitelinkmobile.R;
+import citruscups.com.sitelinkmobile.dataStructures.DataSet;
+import citruscups.com.sitelinkmobile.helper.Helper;
+import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
@@ -248,11 +232,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * Represents an asynchronous login/registration task used to authenticate the user
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
         private final String mCorpCode;
         private final String mLocationCode;
         private final String mUsername;
         private final String mPassword;
+
+        private String mMessage;
 
         UserLoginTask(String corpCode, String locationCode, String username, String password) {
             mCorpCode = corpCode;
@@ -262,112 +247,30 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            /**
-             * Attempt authentication against SiteLink API
-             */
-            String NAMESPACE = "http://tempuri.org/CallCenterWs/CallCenterWs";
-            String URL = "https://api.smdservers.net/CCWs_3.5/CallCenterWs.asmx?WSDL";
-            String METHOD_NAME = "SiteInformation";
-            String ACTION = "http://tempuri.org/CallCenterWs/CallCenterWs/" + METHOD_NAME;
+        protected Boolean doInBackground(Void... param)
+        {
+            Hashtable<String, Object> params = new Hashtable<String, Object>();
+            params.put("sCorpCode", mCorpCode);
+            params.put("sLocationCode", mLocationCode);
+            params.put("sCorpUserName", mUsername);
+            params.put("sCorpPassword", mPassword);
 
-            HttpParams params1 = new BasicHttpParams();
+            DataSet ds = ServerStuff.callSoapMethod("SiteInformation", params);
+            if (ds == null) return false;
+            //for SiteInformation we don't want an RT table
 
-            try {
-                HttpParams httpParameters = new BasicHttpParams();
-                // Set the timeout in milliseconds until a connection is established.
-                int timeoutConnection = 15000;
-                HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-                // Set the default socket timeout (SO_TIMEOUT)
-                // in milliseconds which is the timeout for waiting for data.
-                int timeoutSocket = 35000;
-                HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
-
-                HttpClient httpClient = new DefaultHttpClient(httpParameters);
-                HttpContext localContext = new BasicHttpContext();
-                HttpPost httpPost = new HttpPost(URL);
-                httpPost.setHeader("soapaction", ACTION);
-                httpPost.setHeader("Content-Type", "text/xml; charset=utf-8");
-
-                System.out.println("executing request" + httpPost.getRequestLine());
-
-                final StringBuffer soap = new StringBuffer();
-                soap.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
-                soap.append("<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n");
-                soap.append("<soap:Body>\n");
-                soap.append("<" + METHOD_NAME + " xmlns=\"" + NAMESPACE + "\">\n");
-
-                soap.append("<sCorpCode>" + mCorpCode + "</sCorpCode>\n");
-                soap.append("<sLocationCode>" + mLocationCode + "</sLocationCode>\n");
-                soap.append("<sCorpUserName>" + mUsername + "</sCorpUserName>\n");
-                soap.append("<sCorpPassword>" + mPassword + "</sCorpPassword>\n");
-                soap.append("</"+ METHOD_NAME + ">\n");
-                soap.append("</soap:Body>\n");
-                soap.append("</soap:Envelope>\n");
-                Log.i("SOAP: ", soap.toString());
-                HttpEntity entity = new StringEntity(soap.toString(), HTTP.UTF_8);
-                httpPost.setEntity(entity);
-
-                HttpResponse response = httpClient.execute(httpPost, localContext);
-                HttpEntity r_entity = response.getEntity();  //get response
-                Log.i("Reponse Header", "Begin...");          // response headers
-                Log.i("Reponse Header", "StatusLine:"+response.getStatusLine());
-                Header[] headers = response.getAllHeaders();
-                for(Header h:headers){
-                    Log.i("Reponse Header",h.getName() + ": " + h.getValue());
-                }
-                Log.i("Reponse Header", "END...");
-                byte[] result = null;
-                if (r_entity != null) {
-                    result = new byte[(int) r_entity.getContentLength()];
-                    if (r_entity.isStreaming()) {
-                        DataInputStream is = new DataInputStream(
-                                r_entity.getContent());
-                        is.readFully(result);
-                    }
-                }
-                String str = new String(result, "UTF-8");
-                Log.i("Result: ", str);
-
-                ByteArrayInputStream bais =new ByteArrayInputStream(result);
-// now parse the xml as
-/** Handling XML */
-                SAXParserFactory spf = SAXParserFactory.newInstance();
-                SAXParser sp = spf.newSAXParser();
-                XMLReader xr = sp.getXMLReader();
-
-/** Create handler to handle XML Tags ( extends DefaultHandler ) */
-// ResponseParser  is XML parser class which will parse the XML output.
-                ResponseParserHandler myXMLHandler = new ResponseParserHandler();
-                xr.setContentHandler(myXMLHandler);
-                xr.parse(new InputSource(bais));
-                Log.i("XML data", bais.toString());
-                DataSet ds = myXMLHandler.getDataSet();
-                Log.i("DS", ds.toString());
-/*
-               SoapObject response1 = (SoapObject)str;
-
-                String x = "";
-                for (int i = 0; i < response1.getPropertyCount(); i++)
-                {
-                    SoapObject prop = (SoapObject) response1.getProperty(i);
-                    x += prop.toString() + "\n";
-                    for (int j = 0; j < prop.getPropertyCount(); j++)
-                    {
-                        SoapObject innerProp = (SoapObject) prop.getProperty(j);
-                        x += innerProp.toString();
-                    }
-                }
-                SoapObject  ds = (SoapObject) response1.getProperty(0);
-*/
-
-                //Toast.makeText(getApplicationContext(), objectResult.toString(), Toast.LENGTH_LONG).show();
-            } catch (Exception e) {
-                e.printStackTrace();
+            int retCode = Helper.getRtValue(ds);
+            if (retCode == 0)
+            {
+                mMessage = "Login successful";
+                return true;
             }
-
-            // TODO: register the new account here.
-            return true;
+            else
+            {
+                //error
+                mMessage = "Call return value: " + Helper.getMessageFromRetCode(retCode);
+                return false;
+            }
         }
 
         @Override
@@ -375,6 +278,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mAuthTask = null;
             showProgress(false);
 
+            Log.i("Ret", mMessage);
             if(success) {
                 /*
                 // Create an Intent to take us over to a new TenantSelectActivity

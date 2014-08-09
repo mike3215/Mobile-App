@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import citruscups.com.sitelinkmobile.dataStructures.DataSet;
+import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+
 /**
  * Created by Jakkyl on 8/8/2014.
  */
@@ -20,7 +23,6 @@ public class ResponseParserHandler extends DefaultHandler {
     //As we read any XML element we will push that in this stack
     private ArrayList _elementList = new ArrayList<String>();
     //As we complete one user block in XML, we will push the User instance in userList
-    private ArrayList _objectList = new ArrayList<DataTable>();
 
     public void startDocument() throws SAXException
     {
@@ -59,9 +61,6 @@ public class ResponseParserHandler extends DefaultHandler {
             }
 
             _currentRow = new HashMap<String, Object>();
-        } else if (qName.equals("NewDataSet"))
-        {
-
         }
     }
 
@@ -69,7 +68,7 @@ public class ResponseParserHandler extends DefaultHandler {
     {
         //User instance has been constructed so pop it from object stack and push in userList
         if (parentElement().equals("NewDataSet")) {
-            DataTable table = (DataTable)(dataSet.getTables().get(dataSet.getTables().size() - 1));
+            DataTable table = dataSet.getTables().get(dataSet.getTables().size() - 1);
             table.addRow(_currentRow);
             table.setClosed(true);
             _currentRow = null;
@@ -93,7 +92,7 @@ public class ResponseParserHandler extends DefaultHandler {
 
         if (dataSet.getTables().size() > 0)
         {
-            DataTable table = (DataTable) dataSet.getTables().get(dataSet.getTables().size() - 1);
+            DataTable table = dataSet.getTables().get(dataSet.getTables().size() - 1);
             if (!table.getClosed())
             {
                 if (_currentRow == null)
