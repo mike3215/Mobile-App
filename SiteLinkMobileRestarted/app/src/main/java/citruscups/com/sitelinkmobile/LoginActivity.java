@@ -21,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -344,6 +345,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 Log.i("XML data", bais.toString());
                 DataSet ds = myXMLHandler.getDataSet();
                 Log.i("DS", ds.toString());
+
+                return !ds.containsTable("RT");
 /*
                SoapObject response1 = (SoapObject)str;
 
@@ -367,7 +370,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             }
 
             // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
@@ -376,7 +379,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if(success) {
-                /*
+
                 // Create an Intent to take us over to a new TenantSelectActivity
                 Intent tenantSelectActivity = new Intent(LoginActivity.this, TenantSelectActivity.class);
 
@@ -384,11 +387,15 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 //tenantSelectActivity.putExtra()
 
                 startActivity(tenantSelectActivity);
-                */
+
 
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                //mUsernameView.setError(getString(R.string.error_incorrect_username));
+                //mPasswordView.setError((getString(R.string.error_incorrect_password)));
+
+                Toast.makeText(getApplicationContext(), getString(R.string.error_incorrect_userPass), Toast.LENGTH_LONG).show();
+                mUsernameView.selectAll();
+                mUsernameView.requestFocus();
             }
         }
 

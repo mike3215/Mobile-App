@@ -44,4 +44,16 @@ public class DataSet  {
 
         return  result;
     }
+
+    public Boolean containsTable(String name) {
+        if (tables == null) return false;
+
+        for (int i = 0; i < tables.size(); i++)
+        {
+            if (tables.get(i).getName().equals(name))
+                return true;
+        }
+
+        return false;
+    }
 }
