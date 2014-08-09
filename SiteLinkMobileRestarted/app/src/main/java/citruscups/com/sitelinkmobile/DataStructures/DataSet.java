@@ -1,4 +1,4 @@
-package citruscups.com.sitelinkmobile.dataStructures;
+package citruscups.com.sitelinkmobile.DataStructures;
 
 import java.util.ArrayList;
 

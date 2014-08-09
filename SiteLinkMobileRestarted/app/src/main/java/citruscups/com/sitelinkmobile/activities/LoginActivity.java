@@ -26,7 +26,7 @@ import android.widget.Toast;
 import java.util.Hashtable;
 
 import citruscups.com.sitelinkmobile.R;
-import citruscups.com.sitelinkmobile.dataStructures.DataSet;
+import citruscups.com.sitelinkmobile.DataStructures.DataSet;
 import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 

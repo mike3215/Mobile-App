@@ -3,8 +3,8 @@ package citruscups.com.sitelinkmobile.helper;
 import java.util.ArrayList;
 import java.util.Map;
 
-import citruscups.com.sitelinkmobile.dataStructures.DataSet;
-import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+import citruscups.com.sitelinkmobile.DataStructures.DataSet;
+import citruscups.com.sitelinkmobile.DataStructures.DataTable;
 
 /**
  * Created by Jakkyl on 8/9/2014.
