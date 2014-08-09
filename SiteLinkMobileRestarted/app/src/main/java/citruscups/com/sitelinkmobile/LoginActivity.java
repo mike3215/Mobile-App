@@ -267,7 +267,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
              */
             String NAMESPACE = "http://tempuri.org/CallCenterWs/CallCenterWs";
             String URL = "https://api.smdservers.net/CCWs_3.5/CallCenterWs.asmx?WSDL";
-            String METHOD_NAME = "SiteInformation";
+            String METHOD_NAME = "PromotionsRetrieve";
             String ACTION = "http://tempuri.org/CallCenterWs/CallCenterWs/" + METHOD_NAME;
 
             HttpParams params1 = new BasicHttpParams();
@@ -300,7 +300,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 soap.append("<sLocationCode>demo</sLocationCode>\n");
                 soap.append("<sCorpUserName>demo</sCorpUserName>\n");
                 soap.append("<sCorpPassword>demo</sCorpPassword>\n");
-                soap.append("</SiteInformation>\n");
+                soap.append("</"+ METHOD_NAME + ">\n");
                 soap.append("</soap:Body>\n");
                 soap.append("</soap:Envelope>\n");
                 Log.i("SOAP: ", soap.toString());
@@ -342,6 +342,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 xr.parse(new InputSource(bais));
                 Log.i("XML data", bais.toString());
                 DataSet ds = myXMLHandler.getDataSet();
+                Log.i("DS", ds.toString());
 /*
                SoapObject response1 = (SoapObject)str;
 
