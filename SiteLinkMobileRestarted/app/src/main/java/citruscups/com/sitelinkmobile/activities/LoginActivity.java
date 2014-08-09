@@ -1,10 +1,11 @@
-package citruscups.com.sitelinkmobile;
+package citruscups.com.sitelinkmobile.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -233,11 +234,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * Represents an asynchronous login/registration task used to authenticate the user
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
         private final String mCorpCode;
         private final String mLocationCode;
         private final String mUsername;
         private final String mPassword;
+
+        private String mMessage;
 
         UserLoginTask(String corpCode, String locationCode, String username, String password) {
             mCorpCode = corpCode;
