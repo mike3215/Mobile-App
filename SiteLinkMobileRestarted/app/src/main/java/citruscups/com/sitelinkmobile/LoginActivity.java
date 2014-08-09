@@ -5,9 +5,9 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,12 +22,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.SoapFault;
-import org.ksoap2.serialization.PropertyInfo;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.protocol.HttpContext;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
@@ -252,56 +267,98 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
              * Attempt authentication against SiteLink API
              */
             String NAMESPACE = "http://tempuri.org/CallCenterWs/CallCenterWs";
-            String METHOD_NAME = "SiteInformation";
             String URL = "https://api.smdservers.net/CCWs_3.5/CallCenterWs.asmx?WSDL";
-            String ACTION = "http://tempuri.org/CallCenterWs/CallCenterWs/SiteInformation";
+            String METHOD_NAME = "SiteInformation";
+            String ACTION = "http://tempuri.org/CallCenterWs/CallCenterWs/" + METHOD_NAME;
 
-            SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-            SoapSerializationEnvelope soapSerializationEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-            soapSerializationEnvelope.setOutputSoapObject(Request);
-            soapSerializationEnvelope.dotNet = true;
-            soapSerializationEnvelope.setAddAdornments(false);
-            soapSerializationEnvelope.implicitTypes = true;
-
-/*
-            PropertyInfo piCorpCode = new PropertyInfo();
-            piCorpCode.setType(PropertyInfo.STRING_CLASS);
-            piCorpCode.setName("sCorpCode");
-            piCorpCode.setValue(mCorpCode);
-            Request.addProperty(piCorpCode);
-
-            PropertyInfo piLocationCode = new PropertyInfo();
-            piLocationCode.setType(PropertyInfo.STRING_CLASS);
-            piLocationCode.setName("sLocationCode");
-            piLocationCode.setValue(mLocationCode);
-            Request.addProperty(piLocationCode);
-
-            PropertyInfo piUsername = new PropertyInfo();
-            piUsername.setType(PropertyInfo.STRING_CLASS);
-            piUsername.setName("sCorpUserName");
-            piUsername.setValue(mUsername);
-            Request.addProperty(piUsername);
-
-            PropertyInfo piPassword = new PropertyInfo();
-            piPassword.setType(PropertyInfo.STRING_CLASS);
-            piPassword.setName("sCorpPassword");
-            piPassword.setValue(mPassword);
-            Request.addProperty(piPassword);*/
-
-            Request.addProperty("sCorpCode", mCorpCode);
-            Request.addProperty("sLocationCode", mLocationCode);
-            Request.addProperty("sCorpUserName", mUsername);
-            Request.addProperty("sCorpPassword", mPassword);
+            HttpParams params1 = new BasicHttpParams();
 
             try {
-                HttpTransportSE httpTransportSE = new HttpTransportSE(URL);
-                httpTransportSE.setXmlVersionTag("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                HttpParams httpParameters = new BasicHttpParams();
+                // Set the timeout in milliseconds until a connection is established.
+                int timeoutConnection = 15000;
+                HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
+                // Set the default socket timeout (SO_TIMEOUT)
+                // in milliseconds which is the timeout for waiting for data.
+                int timeoutSocket = 35000;
+                HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
 
-                httpTransportSE.debug = true;
-                httpTransportSE.call(ACTION, soapSerializationEnvelope );
-                SoapObject objectResult = (SoapObject)soapSerializationEnvelope.bodyIn;
+                HttpClient httpClient = new DefaultHttpClient(httpParameters);
+                HttpContext localContext = new BasicHttpContext();
+                HttpPost httpPost = new HttpPost(URL);
+                httpPost.setHeader("soapaction", ACTION);
+                httpPost.setHeader("Content-Type", "text/xml; charset=utf-8");
 
-                Log.d("SiteLink Mobile", objectResult.getProperty(0).toString());
+                System.out.println("executing request" + httpPost.getRequestLine());
+
+                final StringBuffer soap = new StringBuffer();
+                soap.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
+                soap.append("<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n");
+                soap.append("<soap:Body>\n");
+                soap.append("<" + METHOD_NAME + " xmlns=\"" + NAMESPACE + "\">\n");
+
+                soap.append("<sCorpCode>demo</sCorpCode>\n");
+                soap.append("<sLocationCode>demo</sLocationCode>\n");
+                soap.append("<sCorpUserName>demo</sCorpUserName>\n");
+                soap.append("<sCorpPassword>demo</sCorpPassword>\n");
+                soap.append("</SiteInformation>\n");
+                soap.append("</soap:Body>\n");
+                soap.append("</soap:Envelope>\n");
+                Log.i("SOAP: ", soap.toString());
+                HttpEntity entity = new StringEntity(soap.toString(), HTTP.UTF_8);
+                httpPost.setEntity(entity);
+
+                HttpResponse response = httpClient.execute(httpPost, localContext);
+                HttpEntity r_entity = response.getEntity();  //get response
+                Log.i("Reponse Header", "Begin...");          // response headers
+                Log.i("Reponse Header", "StatusLine:"+response.getStatusLine());
+                Header[] headers = response.getAllHeaders();
+                for(Header h:headers){
+                    Log.i("Reponse Header",h.getName() + ": " + h.getValue());
+                }
+                Log.i("Reponse Header", "END...");
+                byte[] result = null;
+                if (r_entity != null) {
+                    result = new byte[(int) r_entity.getContentLength()];
+                    if (r_entity.isStreaming()) {
+                        DataInputStream is = new DataInputStream(
+                                r_entity.getContent());
+                        is.readFully(result);
+                    }
+                }
+                String str = new String(result, "UTF-8");
+                Log.i("Result: ", str);
+
+                ByteArrayInputStream bais =new ByteArrayInputStream(result);
+// now parse the xml as
+/** Handling XML */
+                SAXParserFactory spf = SAXParserFactory.newInstance();
+                SAXParser sp = spf.newSAXParser();
+                XMLReader xr = sp.getXMLReader();
+
+/** Create handler to handle XML Tags ( extends DefaultHandler ) */
+// ResponseParser  is XML parser class which will parse the XML output.
+                ResponseParserHandler myXMLHandler = new ResponseParserHandler();
+                xr.setContentHandler(myXMLHandler);
+                xr.parse(new InputSource(bais));
+                Log.i("XML data", bais.toString());
+                DataSet ds = myXMLHandler.getDataSet();
+/*
+               SoapObject response1 = (SoapObject)str;
+
+                String x = "";
+                for (int i = 0; i < response1.getPropertyCount(); i++)
+                {
+                    SoapObject prop = (SoapObject) response1.getProperty(i);
+                    x += prop.toString() + "\n";
+                    for (int j = 0; j < prop.getPropertyCount(); j++)
+                    {
+                        SoapObject innerProp = (SoapObject) prop.getProperty(j);
+                        x += innerProp.toString();
+                    }
+                }
+                SoapObject  ds = (SoapObject) response1.getProperty(0);
+*/
 
                 //Toast.makeText(getApplicationContext(), objectResult.toString(), Toast.LENGTH_LONG).show();
             } catch (Exception e) {
@@ -318,7 +375,15 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(false);
 
             if(success) {
-                //finish();
+                /*
+                // Create an Intent to take us over to a new TenantSelectActivity
+                Intent tenantSelectActivity = new Intent(getParent(), TenantSelectActivity.class);
+
+                // TODO: pack away the data from the SiteInformation call
+                //tenantSelectActivity.putExtra()
+
+                startActivity(tenantSelectActivity);
+                */
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
