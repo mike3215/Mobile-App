@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_newTenant">Create a new tenant</string>
+    <string name="action_lookupTenant">Lookup existing tenant</string>
+
+    <string name="label_or">Or</string>
+</resources>
