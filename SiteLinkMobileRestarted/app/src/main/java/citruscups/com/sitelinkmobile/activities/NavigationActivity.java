@@ -1,7 +1,9 @@
 package citruscups.com.sitelinkmobile.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import citruscups.com.sitelinkmobile.R;
@@ -23,5 +25,16 @@ public class NavigationActivity extends Activity{
         Button buttonMoveIn = (Button) findViewById(R.id.btnNavMoveIn);
         Button buttonInqRes = (Button) findViewById(R.id.btnNavInqRes);
         Button buttonTenant = (Button) findViewById(R.id.btnNavTenants);
+
+        buttonTenant.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                // Create an Intent to take us over to a new TenantSelectActivity
+                Intent TenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
+                startActivity(TenantLookupActivity);
+            }
+        });
     }
 }
