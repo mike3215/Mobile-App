@@ -15,7 +15,8 @@
         style="@style/AppTheme"
         android:clickable="true"
         android:enabled="true"
-        android:longClickable="false" />
+        android:longClickable="false"
+        android:onClick="paymentClick"/>
 
     <Button
         android:layout_width="match_parent"
@@ -26,7 +27,8 @@
         android:layout_marginTop="16dp"
         style="@style/AppTheme"
         android:enabled="true"
-        android:clickable="true" />
+        android:clickable="true"
+        android:onClick="MoveInClick"/>
 
     <Button
         android:layout_width="match_parent"
@@ -37,7 +39,8 @@
         android:layout_marginTop="16dp"
         style="@style/AppTheme"
         android:clickable="true"
-        android:enabled="true" />
+        android:enabled="true"
+        android:onClick="InqResClick"/>
 
     <Button
         android:layout_width="match_parent"
@@ -48,5 +51,6 @@
         android:layout_marginTop="16dp"
         style="@style/AppTheme"
         android:clickable="true"
-        android:enabled="true" />
+        android:enabled="true"
+        android:onClick="TenantClick"/>
 </LinearLayout>

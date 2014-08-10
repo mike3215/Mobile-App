@@ -2,6 +2,7 @@ package citruscups.com.sitelinkmobile.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 
 import citruscups.com.sitelinkmobile.R;
@@ -23,5 +24,25 @@ public class NavigationActivity extends Activity{
         Button buttonMoveIn = (Button) findViewById(R.id.btnNavMoveIn);
         Button buttonInqRes = (Button) findViewById(R.id.btnNavInqRes);
         Button buttonTenant = (Button) findViewById(R.id.btnNavTenants);
+    }
+
+    // TODO: Add payment click event code
+    public void paymentClick(View view) {
+
+    }
+
+    // TODO: Add move in click event code
+    public void MoveInClick(View view) {
+
+    }
+
+    // TODO: Add inq res click event code
+    public void InqResClick(View view) {
+
+    }
+
+    // TODO: Add tenant click event code
+    public void TenantClick(View view) {
+
     }
 }
