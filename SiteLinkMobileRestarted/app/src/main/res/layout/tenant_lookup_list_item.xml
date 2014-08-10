@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:orientation="vertical"
+             android:padding="10dp"
+             android:paddingLeft="10dp"
+             android:paddingRight="10dp"
+             android:shrinkColumns="*">
+
+    <!-- Name Label -->
+    <TableRow>
+
+        <TextView
+            android:id="@+id/lastName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="lastName"
+            android:textColor="#43bd00"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/firstName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="firstname"
+            android:textColor="#acacac"/>
+
+        <TextView
+            android:id="@+id/company"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="center"
+            android:paddingBottom="2dip"
+            android:text="company"
+            android:textColor="#acacac"/>
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/city"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="city"
+            android:textColor="#acacac"/>
+
+        <TextView
+            android:id="@+id/postalCode"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="postal: "
+            android:textColor="#acacac"/>
+
+        <TextView
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="left"
+            android:text="Mobile: "
+            android:textColor="#5d5d5d"
+            android:textStyle="bold"/>
+    </TableRow>
+</TableLayout>

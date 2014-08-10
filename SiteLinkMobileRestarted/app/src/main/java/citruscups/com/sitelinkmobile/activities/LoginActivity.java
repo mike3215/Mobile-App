@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -26,7 +27,7 @@ import android.widget.Toast;
 import java.util.Hashtable;
 
 import citruscups.com.sitelinkmobile.R;
-import citruscups.com.sitelinkmobile.DataStructures.DataSet;
+import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
@@ -34,6 +35,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
     // Keep track of the login task to ensure we can cancel it if requested
     private UserLoginTask mAuthTask = null;
+    private SharedPreferences mSharedPreferences;
 
     // UI references
     private EditText mCorpCodeView;
@@ -76,6 +78,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
     }
 
     private void populateAutoComplete() {
@@ -149,6 +153,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             showProgress(true);
             mAuthTask = new UserLoginTask(corpCode, locCode, username, password);
             mAuthTask.execute((Void) null);
+
+            mSharedPreferences.edit().putString("CorpCode", corpCode).apply();
+            mSharedPreferences.edit().putString("LocationCode", locCode).apply();
+            mSharedPreferences.edit().putString("UserName", username).apply();
+            mSharedPreferences.edit().putString("Password", password).apply();
         }
     }
 

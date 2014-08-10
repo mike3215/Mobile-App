@@ -10,13 +10,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import citruscups.com.sitelinkmobile.DataStructures.DataSet;
-import citruscups.com.sitelinkmobile.DataStructures.DataTable;
+import citruscups.com.sitelinkmobile.dataStructures.DataSet;
+import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 
 /**
  * Created by Jakkyl on 8/8/2014.
  */
-public class ResponseParserHandler extends DefaultHandler {
+public class ResponseParserHandler extends DefaultHandler
+{
     private DataSet dataSet = new DataSet();
     private Map<String, Object> _currentRow;
 
@@ -38,19 +39,21 @@ public class ResponseParserHandler extends DefaultHandler {
     {
         //Push it in element stack
         this._elementList.add(qName);
-        if(attributes != null && attributes.getLength() == 1)
+        if (attributes != null && attributes.getLength() == 1)
         {
             Log.i("Attr:", attributes.getValue(0));
         }
         //If this is start of 'user' element then prepare a new User instance and push it in object stack
-        if (parentElement().equals("NewDataSet")) {
+        if (parentElement().equals("NewDataSet"))
+        {
             DataTable table = null;
             if (dataSet.getTables().size() > 0)
             {
                 table = dataSet.getTableByName(qName);
             }
 
-            if (table == null) {
+            if (table == null)
+            {
                 table = new DataTable();
                 table.setName(qName);
                 dataSet.addTable(table);
@@ -67,7 +70,8 @@ public class ResponseParserHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException
     {
         //User instance has been constructed so pop it from object stack and push in userList
-        if (parentElement().equals("NewDataSet")) {
+        if (parentElement().equals("NewDataSet"))
+        {
             DataTable table = dataSet.getTables().get(dataSet.getTables().size() - 1);
             table.addRow(_currentRow);
             table.setClosed(true);
@@ -80,7 +84,7 @@ public class ResponseParserHandler extends DefaultHandler {
 
     /**
      * This will be called everytime parser encounter a value node
-     * */
+     */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
         String value = new String(ch, start, length).trim();
@@ -105,7 +109,7 @@ public class ResponseParserHandler extends DefaultHandler {
 
     /**
      * Utility method for getting the current element in processing
-     * */
+     */
     private String currentElement()
     {
         return this._elementList.get(_elementList.size() - 1).toString();
@@ -115,6 +119,7 @@ public class ResponseParserHandler extends DefaultHandler {
     {
         return _elementList.size() > 1 ? _elementList.get(_elementList.size() - 2).toString() : "";
     }
+
     //Accessor for userList object
     public DataSet getDataSet()
     {

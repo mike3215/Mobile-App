@@ -27,7 +27,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import citruscups.com.sitelinkmobile.ResponseParserHandler;
-import citruscups.com.sitelinkmobile.DataStructures.DataSet;
+import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 
 
 /**
@@ -44,8 +44,6 @@ public class ServerStuff
          * Attempt authentication against SiteLink API
          */
         String soapAction = NAMESPACE + "/" + methodName;
-
-        HttpParams params1 = new BasicHttpParams();
 
         try
         {
@@ -66,7 +64,7 @@ public class ServerStuff
 
             Log.i("callSoapMethod", "executing request" + httpPost.getRequestLine());
 
-            final StringBuffer soap = new StringBuffer();
+            final StringBuilder soap = new StringBuilder();
             soap.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
             soap.append("<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">\n");
             soap.append("<soap:Body>\n");
@@ -105,8 +103,6 @@ public class ServerStuff
                     is.readFully(result);
                 }
             }
-            String str = new String(result, "UTF-8");
-            Log.i("Result: ", str);
 
             ByteArrayInputStream bais = new ByteArrayInputStream(result);
 
