@@ -14,17 +14,10 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
-import citruscups.com.sitelinkmobile.activities.util.SystemUiHider;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
 public class TenantLookupActivity extends Activity
 {
     private DataSet _dataSet;
