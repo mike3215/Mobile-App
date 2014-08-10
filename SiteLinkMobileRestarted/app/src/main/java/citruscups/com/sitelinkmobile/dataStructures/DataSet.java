@@ -48,9 +48,9 @@ public class DataSet  {
     public Boolean containsTable(String name) {
         if (tables == null) return false;
 
-        for (int i = 0; i < tables.size(); i++)
+        for (DataTable table : tables)
         {
-            if (tables.get(i).getName().equals(name))
+            if (table.getName().equals(name))
                 return true;
         }
 
