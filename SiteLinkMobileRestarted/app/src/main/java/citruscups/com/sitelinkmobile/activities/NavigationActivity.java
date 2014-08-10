@@ -1,0 +1,27 @@
+package citruscups.com.sitelinkmobile.activities;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.Button;
+
+import citruscups.com.sitelinkmobile.R;
+
+/**
+ * Created by Michael on 8/9/2014.
+ */
+public class NavigationActivity extends Activity{
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Tell the activity which XML layout is right
+        setContentView(R.layout.activity_navigation);
+
+        // Access the Buttons from XML
+        Button buttonPayment = (Button) findViewById(R.id.btnNavPayment);
+        Button buttonMoveIn = (Button) findViewById(R.id.btnNavMoveIn);
+        Button buttonInqRes = (Button) findViewById(R.id.btnNavInqRes);
+        Button buttonTenant = (Button) findViewById(R.id.btnNavTenants);
+    }
+}

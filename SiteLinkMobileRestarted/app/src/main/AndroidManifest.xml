@@ -25,6 +25,12 @@
             android:name=".activities.TenantSelectActivity"
             android:label="@string/activity_tenantselect">
         </activity>
+
+        <activity
+            android:name=".activities.NavigationActivity"
+            android:label="@string/activity_navigation">
+
+        </activity>
     </application>
 
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_navPayment"
+        android:id="@+id/btnNavPayment"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        style="@style/AppTheme"
+        android:clickable="true"
+        android:enabled="true"
+        android:longClickable="false" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_navMoveIn"
+        android:id="@+id/btnNavMoveIn"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        style="@style/AppTheme"
+        android:enabled="true"
+        android:clickable="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_navInqRes"
+        android:id="@+id/btnNavInqRes"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        style="@style/AppTheme"
+        android:clickable="true"
+        android:enabled="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/action_navTenants"
+        android:id="@+id/btnNavTenants"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        style="@style/AppTheme"
+        android:clickable="true"
+        android:enabled="true" />
+</LinearLayout>

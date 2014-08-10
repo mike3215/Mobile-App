@@ -283,12 +283,12 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             Log.i("Ret", mMessage);
             if(success) {
                 // Create an Intent to take us over to a new TenantSelectActivity
-                Intent tenantSelectActivity = new Intent(LoginActivity.this, TenantSelectActivity.class);
+                Intent NavigationActivity = new Intent(LoginActivity.this, NavigationActivity.class);
 
                 // TODO: pack away the data from the SiteInformation call
                 //tenantSelectActivity.putExtra()
 
-                startActivity(tenantSelectActivity);
+                startActivity(NavigationActivity);
 
 
             } else {

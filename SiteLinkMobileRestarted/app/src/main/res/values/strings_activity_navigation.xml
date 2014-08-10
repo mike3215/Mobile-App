@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_navPayment">Make a Payment</string>
+    <string name="action_navMoveIn">Move In</string>
+    <string name="action_navInqRes">Inquiries &amp; Reservations</string>
+    <string name="action_navTenants">Tenants</string>
+
+</resources>
