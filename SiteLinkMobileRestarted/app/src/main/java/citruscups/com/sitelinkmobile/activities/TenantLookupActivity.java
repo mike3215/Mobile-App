@@ -1,14 +1,19 @@
 package citruscups.com.sitelinkmobile.activities;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
@@ -22,20 +27,20 @@ import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
-public class TenantLookupActivity extends Activity
+public class TenantLookupActivity extends Activity implements SearchView.OnQueryTextListener
 {
-    private DataSet _dataSet;
-    private ProgressDialog _progressBar;
+    private DataSet mDataSet;
+    private ProgressDialog mProgressBar;
+    private MenuItem mMenuItem;
     private SharedPreferences mSharedPreferences;
 
     public DataSet getDataSet()
     {
-        return _dataSet;
+        return mDataSet;
     }
-
     public void setDataSet(DataSet ds)
     {
-        _dataSet = ds;
+        mDataSet = ds;
     }
 
     @Override
@@ -44,6 +49,10 @@ public class TenantLookupActivity extends Activity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_tenant_lookup);
+
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
         ListView listView = (ListView) findViewById(R.id.listView);
@@ -57,7 +66,77 @@ public class TenantLookupActivity extends Activity
                 Toast.makeText(getApplicationContext(), "TenantId: " + tenantId, Toast.LENGTH_SHORT).show();
             }
         });
+        listView.setTextFilterEnabled(true);
+
         new GetTenants().execute();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        super.onCreateOptionsMenu(menu);
+
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.tenant_lookup, menu);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        if (searchView != null)
+        {
+            searchView.setIconifiedByDefault(false);
+            searchView.setOnQueryTextListener(this);
+            searchView.setSubmitButtonEnabled(true);
+            searchView.setQueryHint("Search Here");
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s)
+    {
+        ListView listView = (ListView) findViewById(R.id.listView);
+        if (s.equals(""))
+        {
+            listView.clearTextFilter();
+        }
+        else
+        {
+            listView.getAdapter();
+            listView.setFilterText(s);
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.action_add_tenant:
+                //addTenant(tenantId);
+                Toast.makeText(getApplicationContext(), "Add Tenant", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_search:
+                //search();
+                Toast.makeText(getApplicationContext(), "Search", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_refresh:
+                mMenuItem = item;
+                mMenuItem.setActionView(R.layout.progressbar);
+                mMenuItem.expandActionView();
+
+                new GetTenants().execute();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private class GetTenants extends AsyncTask<Void, Void, Void>
@@ -69,10 +148,10 @@ public class TenantLookupActivity extends Activity
         {
             super.onPreExecute();
 
-            _progressBar = new ProgressDialog(TenantLookupActivity.this);
-            _progressBar.setMessage("Please wait...");
-            _progressBar.setCancelable(false);
-            _progressBar.show();
+            mProgressBar = new ProgressDialog(TenantLookupActivity.this);
+            mProgressBar.setMessage("Please wait...");
+            mProgressBar.setCancelable(false);
+            mProgressBar.show();
         }
 
         @Override
@@ -89,10 +168,10 @@ public class TenantLookupActivity extends Activity
             params.put("sLocationCode", locationCode);
             params.put("sCorpUserName", userName);
             params.put("sCorpPassword", password);
-            _dataSet = ServerStuff.callSoapMethod("TenantListDetailed", params);
-            if (_dataSet != null)
+            mDataSet = ServerStuff.callSoapMethod("TenantListDetailed", params);
+            if (mDataSet != null)
             {
-                dataTable = _dataSet.getTableByName("Table");
+                dataTable = mDataSet.getTableByName("Table");
             }
 
             return null;
@@ -103,17 +182,33 @@ public class TenantLookupActivity extends Activity
         {
             super.onPreExecute();
 
-            if (_progressBar.isShowing())
-                _progressBar.dismiss();
+            if (mProgressBar.isShowing())
+                mProgressBar.dismiss();
 
             //String columns[] = row.keySet().toArray(new String[row.size()]);
             ArrayList<Map<String, Object>> rows = dataTable.getRows();
+            ArrayList<Map<String, String>> rows2 = new ArrayList<Map<String, String>>();
+            for (Map<String, Object> row : rows)
+            {
+                Map<String, String> tempRow = new Hashtable<String, String>();
+                for (Map.Entry<String, Object> entry : row.entrySet())
+                {
+                    tempRow.put(entry.getKey(), (String) entry.getValue());
+                }
+                rows2.add(tempRow);
+            }
             String columns[] = new String[]{"sFName", "sLName", "sCompany", "sCity", "sPostalCode", "sPhone", "TenantID"};
             int fields[] = new int[]{R.id.firstName, R.id.lastName, R.id.company, R.id.city, R.id.postalCode, R.id.phone, R.id.tenantId};
-            ListAdapter adapter = new SimpleAdapter(TenantLookupActivity.this, rows, R.layout.tenant_lookup_list_item, columns, fields);
+            ListAdapter adapter = new SimpleAdapter(TenantLookupActivity.this, rows2, R.layout.tenant_lookup_list_item, columns, fields);
 
             ListView listView = (ListView) findViewById(R.id.listView);
             listView.setAdapter(adapter);
+
+            if (mMenuItem != null)
+            {
+                mMenuItem.collapseActionView();
+                mMenuItem.setActionView(null);
+            }
         }
     }
 }

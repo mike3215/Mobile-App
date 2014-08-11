@@ -28,7 +28,7 @@
             android:name=".activities.TenantLookupActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_tenant_lookup"
-            android:theme="@style/FullscreenTheme">
+            android:parentActivityName=".activities.NavigationActivity">[
         </activity>
 
         <activity
