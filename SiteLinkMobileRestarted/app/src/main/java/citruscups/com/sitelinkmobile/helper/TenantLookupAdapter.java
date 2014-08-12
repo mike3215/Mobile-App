@@ -9,9 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
@@ -73,7 +71,8 @@ public class TenantLookupAdapter extends BaseAdapter implements Filterable{
                     constraint = constraint.toString().toLowerCase();
                     for (int i = 0; i < mDataTableOriginal.getCount(); i++) {
                         String data = (String) mDataTableOriginal.getRow(i).get("sLName");
-                        if (data.toLowerCase().startsWith(constraint.toString())) {
+                        if (data.toLowerCase().contains(constraint.toString()))
+                        {
                             FilteredDataTable.addRow(mDataTableOriginal.getRow(i));
                         }
                     }
