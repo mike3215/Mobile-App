@@ -37,24 +37,4 @@ public class NavigationActivity extends Activity{
             }
         });
     }
-
-    // TODO: Add payment click event code
-    public void paymentClick(View view) {
-
-    }
-
-    // TODO: Add move in click event code
-    public void MoveInClick(View view) {
-
-    }
-
-    // TODO: Add inq res click event code
-    public void InqResClick(View view) {
-
-    }
-
-    // TODO: Add tenant click event code
-    public void TenantClick(View view) {
-
-    }
 }

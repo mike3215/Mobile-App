@@ -49,6 +49,10 @@ public class DataTable
         _rows.add(row);
     }
 
+    public Map<String, Object> getRow(int i) {return _rows.get(i);}
+
+    public Integer getCount() { return _rows.size();}
+
     @Override
     public String toString()
     {
