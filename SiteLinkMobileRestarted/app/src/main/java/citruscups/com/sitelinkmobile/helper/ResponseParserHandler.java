@@ -1,4 +1,4 @@
-package citruscups.com.sitelinkmobile;
+package citruscups.com.sitelinkmobile.helper;
 
 import android.util.Log;
 

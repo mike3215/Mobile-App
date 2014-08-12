@@ -26,8 +26,8 @@ import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import citruscups.com.sitelinkmobile.ResponseParserHandler;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
+import citruscups.com.sitelinkmobile.helper.ResponseParserHandler;
 
 
 /**
