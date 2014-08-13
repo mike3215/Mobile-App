@@ -1,0 +1,15 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="citruscups.com.sitelinkmobile.activities.NewTenantActivity">
+    <item
+        android:id="@+id/action_cancel"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="Cancel"/>
+
+    <item
+        android:id="@+id/action_save"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="Save"/>
+</menu>

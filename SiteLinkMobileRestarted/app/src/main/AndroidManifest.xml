@@ -28,13 +28,17 @@
             android:name=".activities.TenantLookupActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_tenant_lookup"
-            android:parentActivityName=".activities.NavigationActivity">[
+            android:parentActivityName=".activities.NavigationActivity">
+            [
         </activity>
-
         <activity
             android:name=".activities.NavigationActivity"
             android:label="@string/activity_navigation">
-
+        </activity>
+        <activity
+            android:name=".activities.NewTenantActivity"
+            android:label="@string/title_activity_new_tenant"
+            android:parentActivityName=".activities.TenantLookupActivity">
         </activity>
     </application>
 

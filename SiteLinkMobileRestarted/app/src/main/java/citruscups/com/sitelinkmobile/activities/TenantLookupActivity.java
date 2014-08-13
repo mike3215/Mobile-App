@@ -3,6 +3,7 @@ package citruscups.com.sitelinkmobile.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,12 +27,12 @@ import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class TenantLookupActivity extends Activity implements SearchView.OnQueryTextListener
 {
+    ListView mainListView;
+    TenantLookupAdapter tenantLookupAdapter;
     private DataSet mDataSet;
     private ProgressDialog mProgressBar;
     private MenuItem mMenuItem;
     private SharedPreferences mSharedPreferences;
-    ListView mainListView;
-    TenantLookupAdapter tenantLookupAdapter;
 
     public DataSet getDataSet()
     {
@@ -50,7 +51,11 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         setContentView(R.layout.activity_tenant_lookup);
 
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null)
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
@@ -122,8 +127,8 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         switch (item.getItemId())
         {
             case R.id.action_add_tenant:
-                //addTenant(tenantId);
-                Toast.makeText(getApplicationContext(), "Add Tenant", Toast.LENGTH_SHORT).show();
+                Intent newTenantActivity = new Intent(this, NewTenantActivity.class);
+                startActivity(newTenantActivity);
                 return true;
             case R.id.action_search:
                 //search();
