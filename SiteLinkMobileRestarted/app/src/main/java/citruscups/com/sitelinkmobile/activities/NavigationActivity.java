@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import citruscups.com.sitelinkmobile.R;
+import citruscups.com.sitelinkmobile.activities.TenantLookupActivity.TenantLookupUsedFor;
 
 /**
  * Created by Michael on 8/9/2014.
@@ -33,6 +34,19 @@ public class NavigationActivity extends Activity{
             {
                 // Create an Intent to take us over to a new TenantSelectActivity
                 Intent TenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
+                TenantLookupActivity.putExtra("UsedFor", TenantLookupUsedFor.TenantLookup);
+                startActivity(TenantLookupActivity);
+            }
+        });
+
+        buttonPayment.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                // Create an Intent to take us over to a new TenantSelectActivity
+                Intent TenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
+                TenantLookupActivity.putExtra("UsedFor", TenantLookupUsedFor.Payment);
                 startActivity(TenantLookupActivity);
             }
         });

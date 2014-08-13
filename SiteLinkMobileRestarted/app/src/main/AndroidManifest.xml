@@ -34,6 +34,13 @@
         <activity
             android:name=".activities.NavigationActivity"
             android:label="@string/activity_navigation">
+        </activity>
+
+        <activity
+            android:name=".activities.PaymentUnitLookupActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_payment_unit_lookup"
+            android:parentActivityName=".activities.TenantLookupActivity">
 
         </activity>
     </application>

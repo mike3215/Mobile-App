@@ -3,6 +3,7 @@ package citruscups.com.sitelinkmobile.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,8 +31,16 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     private ProgressDialog mProgressBar;
     private MenuItem mMenuItem;
     private SharedPreferences mSharedPreferences;
-    ListView mainListView;
-    TenantLookupAdapter tenantLookupAdapter;
+    private TenantLookupUsedFor mUsedFor;
+    private ListView mainListView;
+    private TenantLookupAdapter tenantLookupAdapter;
+
+    public enum TenantLookupUsedFor {
+        Payment,
+        TenantLookup,
+        InqRes,
+        MoveIn
+    }
 
     public DataSet getDataSet()
     {
@@ -52,6 +61,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        mUsedFor = (TenantLookupUsedFor) this.getIntent().getExtras().get("UsedFor");
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
         tenantLookupAdapter = new TenantLookupAdapter(this, getLayoutInflater());
@@ -65,7 +75,19 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             {
                 HashMap<String, Object> selectedRow = (HashMap<String, Object>) adapterView.getItemAtPosition(i);
                 String tenantId = (String) selectedRow.get("TenantID");
-                Toast.makeText(getApplicationContext(), "TenantId: " + tenantId, Toast.LENGTH_SHORT).show();
+
+                Intent intent = null;
+                switch (mUsedFor) {
+                    case Payment:
+                        intent = new Intent(TenantLookupActivity.this, PaymentUnitLookupActivity.class);
+                        intent.putExtra("TenantID", tenantId);
+                        startActivity(intent);
+                        break;
+
+                    case TenantLookup:
+                        Toast.makeText(getApplicationContext(), "TenantId: " + tenantId, Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         });
         mainListView.setTextFilterEnabled(true);
@@ -145,36 +167,6 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         DataTable dataTable = mDataSet.getTableByName("Table");
         tenantLookupAdapter.updateData(dataTable);
     }
-/*
-    public void GetTenants() {
-        //Temp
-        final String corpCode = mSharedPreferences.getString("CorpCode", "DEMO");
-        final String locationCode = mSharedPreferences.getString("LocationCode", "DEMO");
-        final String userName = mSharedPreferences.getString("UserName", "DEMO");
-        final String password = mSharedPreferences.getString("Password", "DEMO");
-
-        DataTable dataTable = null;
-
-        Hashtable<String, Object> params = new Hashtable<String, Object>();
-        params.put("sCorpCode", corpCode);
-        params.put("sLocationCode", locationCode);
-        params.put("sCorpUserName", userName);
-        params.put("sCorpPassword", password);
-
-        setProgressBarIndeterminateVisibility(true);
-
-        mDataSet = ServerStuff.callSoapMethod("TenantListDetailed", params);
-
-        setProgressBarIndeterminateVisibility(false);
-
-        if (mDataSet != null)
-        {
-            dataTable = mDataSet.getTableByName("Table");
-        }
-
-        tenantLookupAdapter.updateData(dataTable);
-    }
-*/
 
     private class GetTenants extends AsyncTask<Void, Void, Void>
     {
