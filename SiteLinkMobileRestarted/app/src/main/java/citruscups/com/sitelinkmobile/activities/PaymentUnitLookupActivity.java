@@ -1,11 +1,11 @@
 package citruscups.com.sitelinkmobile.activities;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
+import citruscups.com.sitelinkmobile.adapters.PaymentUnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
@@ -30,9 +32,9 @@ import citruscups.com.sitelinkmobile.server.ServerStuff;
 public class PaymentUnitLookupActivity extends Activity {
     private DataSet mDataSet;
     private ProgressDialog mProgressBar;
-    private MenuItem mMenuItem;
     private SharedPreferences mSharedPreferences;
     private ListView mainListView;
+    private PaymentUnitLookupAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,23 +43,37 @@ public class PaymentUnitLookupActivity extends Activity {
 
         setContentView(R.layout.activity_payment_unit_lookup);
 
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null)
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
+
+        mAdapter = new PaymentUnitLookupAdapter(this, getLayoutInflater());
 
         mainListView = (ListView) findViewById(R.id.payment_unitLookup_listView);
 
+        mainListView.setAdapter(mAdapter);
         mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
-                HashMap<String, Object> selectedRow = (HashMap<String, Object>) adapterView.getItemAtPosition(i);
-                String ledgerID = (String) selectedRow.get("LedgerID");
+                Map<String, String> selectedRow = (Map<String, String>) adapterView.getItemAtPosition(i);
+                String ledgerID = selectedRow.get("LedgerID");
                 Toast.makeText(getApplicationContext(), "LedgerID " + ledgerID, Toast.LENGTH_SHORT).show();
             }
         });
         mainListView.setTextFilterEnabled(true);
 
         new GetAccountBalances().execute();
+    }
+
+    private void UpdateBalances(ArrayList<Map<String, String>> rows) {
+        mAdapter.updateData(rows);
     }
 
     private class GetAccountBalances extends AsyncTask<Void, Void, Void>
@@ -107,7 +123,6 @@ public class PaymentUnitLookupActivity extends Activity {
         {
             super.onPreExecute();
 
-
             if (mProgressBar.isShowing())
                 mProgressBar.dismiss();
 
@@ -115,37 +130,44 @@ public class PaymentUnitLookupActivity extends Activity {
 
             ArrayList<Map<String, Object>> rows = dataTable.getRows();
             ArrayList<Map<String, String>> rows2 = new ArrayList<Map<String, String>>();
-            String unitName = "";
-            Double unitBalance = 0.00;
+            List<Double> values = new ArrayList<Double>();
+            String unitID = "";
             for (Map<String, Object> row : rows)
             {
-                if (unitName.equals(row.get("sUnitName"))) {
-                    unitBalance += Double.parseDouble((String) row.get("dcBalance"));
+                if (unitID.equals(row.get("UnitID"))) {
+                    values.add(Double.parseDouble((String) row.get("dcBalance")));
                 } else {
-                    unitName = (String) row.get("sUnitName");
-                    unitBalance = Double.parseDouble((String) row.get("dcBalance"));
+                    unitID = (String) row.get("UnitID");
+                    values = new ArrayList<Double>();
+                    values.add(Double.parseDouble((String) row.get("dcBalance")));
                 }
 
                 // Other Fees is always the last entry for a given unit
                 if ("Other Fees".equalsIgnoreCase((String) row.get("sItem"))) {
                     Map<String, String> tempRow = new Hashtable<String, String>();
-                    tempRow.put("sUnitName", "Unit Name: " + unitName);
-                    tempRow.put("sBalance", "Balance: " + String.format("%.2f", unitBalance));
+                    tempRow.put("sUnitName", (String) row.get("sUnitName"));
+                    tempRow.put("sRent", String.format("%.2f", values.get(2)));
+                    tempRow.put("sInsurance", String.format("%.2f", values.get(3)));
+                    tempRow.put("sFees", String.format("%.2f", values.get(4) + values.get(5) + values.get(6)));
+                    tempRow.put("sOther", String.format("%.2f", values.get(0) + values.get(1)));
+                    tempRow.put("sBalance", String.format("%.2f", values.get(0) + values.get(1) + values.get(2)
+                                                                    + values.get(3) + values.get(4) + values.get(5)
+                                                                    + values.get(6)));
+                    tempRow.put("UnitID", (String) row.get("UnitID"));
+                    tempRow.put("LedgerID", (String) row.get("LedgerID"));
                     rows2.add(tempRow);
                 }
 
             }
+
+            UpdateBalances(rows2);
+            /*
             String columns[] = new String[]{"sUnitName", "sBalance"};
             int fields[] = new int[]{android.R.id.text1, android.R.id.text2};
             ListAdapter adapter = new SimpleAdapter(PaymentUnitLookupActivity.this, rows2, android.R.layout.simple_list_item_2, columns, fields);
             ListView paymentUnitLookupListView = (ListView) findViewById(R.id.payment_unitLookup_listView);
             paymentUnitLookupListView.setAdapter(adapter);
-
-            if (mMenuItem != null)
-            {
-                mMenuItem.collapseActionView();
-                mMenuItem.setActionView(null);
-            }
+            */
         }
     }
 }

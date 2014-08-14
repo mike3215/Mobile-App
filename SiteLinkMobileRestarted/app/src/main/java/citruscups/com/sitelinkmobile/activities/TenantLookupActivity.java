@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
-import citruscups.com.sitelinkmobile.helper.TenantLookupAdapter;
+import citruscups.com.sitelinkmobile.adapters.TenantLookupAdapter;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class TenantLookupActivity extends Activity implements SearchView.OnQueryTextListener
