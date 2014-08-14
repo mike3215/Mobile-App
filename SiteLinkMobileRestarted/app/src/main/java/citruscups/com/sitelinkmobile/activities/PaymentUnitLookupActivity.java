@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
@@ -85,7 +86,7 @@ public class PaymentUnitLookupActivity extends Activity {
             final String TenantID = (String) PaymentUnitLookupActivity.this.getIntent().getExtras().get("TenantID");
             final Integer numMonthsPrepay = 0;
 
-            Hashtable<String, Object> params = new Hashtable<String, Object>();
+            LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
             params.put("sCorpCode", corpCode);
             params.put("sLocationCode", locationCode);
             params.put("sCorpUserName", userName);

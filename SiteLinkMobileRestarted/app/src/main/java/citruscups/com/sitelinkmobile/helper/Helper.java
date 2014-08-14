@@ -34,7 +34,7 @@ public class Helper
             ArrayList<Map<String, Object>> rows = dt.getRows();
             if (rows.size() > 0)
             {
-                return (Integer) rows.get(0).get("Ret_Code");
+                return Integer.parseInt(rows.get(0).get("Ret_Code").toString());
             }
         }
 

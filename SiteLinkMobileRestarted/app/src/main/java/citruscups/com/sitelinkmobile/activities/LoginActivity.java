@@ -24,7 +24,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
@@ -260,7 +260,7 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         @Override
         protected Boolean doInBackground(Void... param)
         {
-            Hashtable<String, Object> params = new Hashtable<String, Object>();
+            LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
             params.put("sCorpCode", mCorpCode);
             params.put("sLocationCode", mLocationCode);
             params.put("sCorpUserName", mUsername);

@@ -20,7 +20,7 @@ import org.xml.sax.XMLReader;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
@@ -38,7 +38,7 @@ public class ServerStuff
     private static final String NAMESPACE = "http://tempuri.org/CallCenterWs/CallCenterWs";
     private static final String URL = "https://api.smdservers.net/CCWs_3.5/CallCenterWs.asmx?WSDL";
 
-    public static DataSet callSoapMethod(String methodName, Hashtable<String, Object> params)
+    public static DataSet callSoapMethod(String methodName, LinkedHashMap<String, Object> params)
     {
         /**
          * Attempt authentication against SiteLink API

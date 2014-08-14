@@ -17,7 +17,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.LinkedHashMap;
 
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
@@ -35,17 +35,11 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     private ListView mainListView;
     private TenantLookupAdapter tenantLookupAdapter;
 
-    public enum TenantLookupUsedFor {
-        Payment,
-        TenantLookup,
-        InqRes,
-        MoveIn
-    }
-
     public DataSet getDataSet()
     {
         return mDataSet;
     }
+
     public void setDataSet(DataSet ds)
     {
         mDataSet = ds;
@@ -81,7 +75,8 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 String tenantId = (String) selectedRow.get("TenantID");
 
                 Intent intent = null;
-                switch (mUsedFor) {
+                switch (mUsedFor)
+                {
                     case Payment:
                         intent = new Intent(TenantLookupActivity.this, PaymentUnitLookupActivity.class);
                         intent.putExtra("TenantID", tenantId);
@@ -167,9 +162,18 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         }
     }
 
-    public void UpdateTenants() {
+    public void UpdateTenants()
+    {
         DataTable dataTable = mDataSet.getTableByName("Table");
         tenantLookupAdapter.updateData(dataTable);
+    }
+
+    public enum TenantLookupUsedFor
+    {
+        Payment,
+        TenantLookup,
+        InqRes,
+        MoveIn
     }
 
     private class GetTenants extends AsyncTask<Void, Void, Void>
@@ -196,7 +200,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             final String userName = mSharedPreferences.getString("UserName", "DEMO");
             final String password = mSharedPreferences.getString("Password", "DEMO");
 
-            Hashtable<String, Object> params = new Hashtable<String, Object>();
+            LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
             params.put("sCorpCode", corpCode);
             params.put("sLocationCode", locationCode);
             params.put("sCorpUserName", userName);
