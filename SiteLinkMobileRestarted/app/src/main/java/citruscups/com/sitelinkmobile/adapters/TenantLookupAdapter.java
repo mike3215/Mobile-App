@@ -18,11 +18,13 @@ import citruscups.com.sitelinkmobile.dataStructures.DataTable;
  * Created by Michael on 8/11/2014.
  */
 public class TenantLookupAdapter extends BaseAdapter implements Filterable{
-
+    private final Object lock = new Object();
+    private final String mColumns[] = new String[]{"sFName", "sLName", "sCompany", "sCity", "sPostalCode", "sPhone", "TenantID"};
     Context mContext;
     LayoutInflater mInflater;
     DataTable mDataTable;
     DataTable mDataTableOriginal;
+    private ArrayFilter mFilter;
 
     public TenantLookupAdapter(Context context, LayoutInflater inflater) {
         mContext = context;
@@ -32,77 +34,40 @@ public class TenantLookupAdapter extends BaseAdapter implements Filterable{
 
     @Override
     public int getCount() {
-        return mDataTable.getCount();
+        return mDataTable == null ? 0 : mDataTable.getCount();
     }
 
     @Override
-    public Filter getFilter() {
-        Filter filter = new Filter() {
-
-            @SuppressWarnings("unchecked")
-            @Override
-            protected void publishResults(CharSequence constraint,FilterResults results) {
-
-                mDataTable = (DataTable) results.values; // has the filtered values
-                notifyDataSetChanged();  // notifies the data with new filtered values
-            }
-
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
-                DataTable FilteredDataTable = new DataTable();
-
-                if (mDataTableOriginal == null) {
-                    mDataTableOriginal = mDataTable; // saves the original data in mOriginalValues
-                }
-
-                /********
-                 *
-                 *  If constraint(CharSequence that is received) is null returns the mOriginalValues(Original) values
-                 *  else does the Filtering and returns FilteredArrList(Filtered)
-                 *
-                 ********/
-                if (constraint == null || constraint.length() == 0) {
-
-                    // set the Original result to return
-                    results.count = mDataTableOriginal.getCount();
-                    results.values = mDataTableOriginal;
-                } else {
-                    constraint = constraint.toString().toLowerCase();
-                    for (int i = 0; i < mDataTableOriginal.getCount(); i++) {
-                        String data = (String) mDataTableOriginal.getRow(i).get("sLName");
-                        if (data.toLowerCase().contains(constraint.toString()))
-                        {
-                            FilteredDataTable.addRow(mDataTableOriginal.getRow(i));
-                        }
-                    }
-                    // set the Filtered result to return
-                    results.count = FilteredDataTable.getCount();
-                    results.values = FilteredDataTable;
-                }
-                return results;
-            }
-        };
-        return filter;
+    public Filter getFilter()
+    {
+        if (mFilter == null)
+        {
+            mFilter = new ArrayFilter();
+        }
+        return mFilter;
     }
 
     @Override
-    public Object getItem(int i) {
+    public Object getItem(int i)
+    {
         return mDataTable.getRow(i);
     }
 
     @Override
-    public long getItemId(int i) {
+    public long getItemId(int i)
+    {
         return i;
     }
 
     @Override
-    public View getView(int i, View convertView, ViewGroup parent) {
+    public View getView(int i, View convertView, ViewGroup parent)
+    {
         ViewHolder holder;
 
         // Check if the view already exists
         // if so, no need to inflate and findViewByID again.
-        if (convertView == null) {
+        if (convertView == null)
+        {
             // Inflate the custom row layout from the XML
             convertView = mInflater.inflate(R.layout.tenant_lookup_list_item, null);
 
@@ -118,7 +83,9 @@ public class TenantLookupAdapter extends BaseAdapter implements Filterable{
 
             // Hang ont this holder for future recyclage
             convertView.setTag(holder);
-        } else {
+        }
+        else
+        {
             // Skip all the expensive inflation/findViewByID
             // and just get the holder that was already made
             holder = (ViewHolder) convertView.getTag();
@@ -135,31 +102,38 @@ public class TenantLookupAdapter extends BaseAdapter implements Filterable{
         String phone = "";
         String tenantID = "";
 
-        if (dataTableItem.containsKey("sLName")) {
+        if (dataTableItem.containsKey("sLName"))
+        {
             lastName = (String) dataTableItem.get("sLName");
         }
 
-        if (dataTableItem.containsKey("sFName")) {
+        if (dataTableItem.containsKey("sFName"))
+        {
             firstName = (String) dataTableItem.get("sFName");
         }
 
-        if (dataTableItem.containsKey("sCompany")) {
+        if (dataTableItem.containsKey("sCompany"))
+        {
             company = (String) dataTableItem.get("sCompany");
         }
 
-        if (dataTableItem.containsKey("sCity")) {
+        if (dataTableItem.containsKey("sCity"))
+        {
             city = (String) dataTableItem.get("sCity");
         }
 
-        if (dataTableItem.containsKey("sPostalCode")) {
+        if (dataTableItem.containsKey("sPostalCode"))
+        {
             postalCode = (String) dataTableItem.get("sPostalCode");
         }
 
-        if (dataTableItem.containsKey("sPhone")) {
+        if (dataTableItem.containsKey("sPhone"))
+        {
             phone = (String) dataTableItem.get("sPhone");
         }
 
-        if (dataTableItem.containsKey("TenantID")) {
+        if (dataTableItem.containsKey("TenantID"))
+        {
             tenantID = (String) dataTableItem.get("TenantID");
         }
 
@@ -174,12 +148,14 @@ public class TenantLookupAdapter extends BaseAdapter implements Filterable{
         return convertView;
     }
 
-    public void updateData(DataTable dataTable) {
+    public void updateData(DataTable dataTable)
+    {
         mDataTable = dataTable;
         notifyDataSetChanged();
     }
 
-    private static class ViewHolder {
+    private static class ViewHolder
+    {
         public TextView lastNameTextView;
         public TextView firstNameTextView;
         public TextView companyTextView;
@@ -187,5 +163,78 @@ public class TenantLookupAdapter extends BaseAdapter implements Filterable{
         public TextView postalCodeTextView;
         public TextView phoneTextView;
         public TextView tenantIDTextView;
+    }
+
+    private class ArrayFilter extends Filter
+    {
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results)
+        {
+
+            mDataTable = (DataTable) results.values; // has the filtered values
+            if (results.count > 0)
+            {
+                notifyDataSetChanged();  // notifies the data with new filtered values
+            }
+            else
+            {
+                notifyDataSetInvalidated();
+            }
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint)
+        {
+            FilterResults results = new FilterResults();        // Holds the results of a filtering operation in values
+            DataTable FilteredDataTable = new DataTable();
+
+            if (mDataTableOriginal == null)
+            {
+                synchronized (lock)
+                {
+                    mDataTableOriginal = mDataTable; // saves the original data in mOriginalValues
+                }
+            }
+
+            /********
+             *
+             *  If constraint(CharSequence that is received) is null returns the mOriginalValues(Original) values
+             *  else does the Filtering and returns FilteredArrList(Filtered)
+             *
+             ********/
+            if (constraint == null || constraint.length() == 0)
+            {
+                // set the Original result to return
+                synchronized (lock)
+                {
+                    results.count = mDataTableOriginal.getCount();
+                    results.values = mDataTableOriginal;
+                }
+            }
+            else
+            {
+                constraint = constraint.toString().toLowerCase();
+
+                for (int i = 0; i < mDataTableOriginal.getCount(); i++)
+                {
+                    for (String columnName : mColumns)
+                    {
+                        String data = (String) mDataTableOriginal.getRow(i).get(columnName);
+                        if (data == null) continue;
+
+                        if (data.toLowerCase().contains(constraint.toString()))
+                        {
+                            FilteredDataTable.addRow(mDataTableOriginal.getRow(i));
+                            break;
+                        }
+                    }
+                }
+                // set the Filtered result to return
+                results.count = FilteredDataTable.getCount();
+                results.values = FilteredDataTable;
+            }
+            return results;
+        }
     }
 }

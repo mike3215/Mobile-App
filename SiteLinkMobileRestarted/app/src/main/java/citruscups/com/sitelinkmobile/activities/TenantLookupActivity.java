@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import citruscups.com.sitelinkmobile.R;
+import citruscups.com.sitelinkmobile.adapters.TenantLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
-import citruscups.com.sitelinkmobile.adapters.TenantLookupAdapter;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class TenantLookupActivity extends Activity implements SearchView.OnQueryTextListener
@@ -122,12 +122,6 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     @Override
     public boolean onQueryTextSubmit(String s)
     {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s)
-    {
         if (s.equals(""))
         {
             mainListView.clearTextFilter();
@@ -143,6 +137,12 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     }
 
     @Override
+    public boolean onQueryTextChange(String s)
+    {
+        return false;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
         switch (item.getItemId())
@@ -152,8 +152,6 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 startActivity(newTenantActivity);
                 return true;
             case R.id.action_search:
-                //search();
-                Toast.makeText(getApplicationContext(), "Search", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_refresh:
                 mMenuItem = item;
