@@ -59,7 +59,12 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        mUsedFor = (TenantLookupUsedFor) this.getIntent().getExtras().get("UsedFor");
+        if (this.getIntent().hasExtra("UsedFor")) {
+            mUsedFor = (TenantLookupUsedFor) this.getIntent().getExtras().get("UsedFor");
+        } else {
+            mUsedFor = TenantLookupUsedFor.TenantLookup;
+        }
+
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
         tenantLookupAdapter = new TenantLookupAdapter(this, getLayoutInflater());

@@ -3,6 +3,7 @@ package citruscups.com.sitelinkmobile.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -62,9 +63,14 @@ public class PaymentUnitLookupActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
+                // TODO: Pass along appropriate data
+                /*
                 Map<String, String> selectedRow = (Map<String, String>) adapterView.getItemAtPosition(i);
                 String ledgerID = selectedRow.get("LedgerID");
                 Toast.makeText(getApplicationContext(), "LedgerID " + ledgerID, Toast.LENGTH_SHORT).show();
+                */
+                Intent intent = new Intent(PaymentUnitLookupActivity.this, PaymentActivity.class);
+                startActivity(intent);
             }
         });
         mainListView.setTextFilterEnabled(true);
