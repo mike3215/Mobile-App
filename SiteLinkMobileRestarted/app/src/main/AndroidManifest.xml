@@ -35,25 +35,26 @@
             android:name=".activities.NavigationActivity"
             android:label="@string/activity_navigation">
         </activity>
-
         <activity
             android:name=".activities.PaymentUnitLookupActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_payment_unit_lookup"
             android:parentActivityName=".activities.TenantLookupActivity">
-
         </activity>
         <activity
             android:name=".activities.NewTenantActivity"
             android:label="@string/title_activity_new_tenant"
             android:parentActivityName=".activities.TenantLookupActivity">
         </activity>
-
         <activity
             android:name=".activities.PaymentActivity"
             android:label="@string/title_activity_payment"
             android:parentActivityName=".activities.PaymentUnitLookupActivity">
-
+        </activity>
+        <activity
+            android:name=".activities.UnitLookupActivity"
+            android:label="@string/title_activity_unit_lookup"
+            android:parentActivityName=".activities.NavigationActivity">
         </activity>
     </application>
 

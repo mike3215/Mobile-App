@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:orientation="vertical"
+             android:padding="10dp"
+             android:paddingLeft="10dp"
+             android:paddingRight="10dp"
+             android:shrinkColumns="*">
+
+    <!-- Name Label -->
+    <TableRow>
+
+        <TextView
+            android:id="@+id/unitName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="lastName"
+            android:textColor="#43bd00"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/typeName"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="firstname"
+            android:textColor="#acacac"/>
+
+        <TextView
+            android:id="@+id/width"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="center"
+            android:paddingBottom="2dip"
+            android:text="company"
+            android:textColor="#acacac"/>
+
+        <TextView
+            android:id="@+id/length"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="center"
+            android:paddingBottom="2dip"
+            android:text="company"
+            android:textColor="#acacac"/>
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/standardRate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="city"
+            android:textColor="#acacac"/>
+
+        <TextView
+            android:id="@+id/floor"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:paddingBottom="2dip"
+            android:paddingRight="5dip"
+            android:text="postal: "
+            android:textColor="#acacac"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <CheckBox
+            android:id="@+id/climate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:text="Climate"/>
+
+        <CheckBox
+            android:id="@+id/inside"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:text="Inside"/>
+
+        <CheckBox
+            android:id="@+id/power"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:text="Power"/>
+
+        <CheckBox
+            android:id="@+id/alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="0"
+            android:text="Alarm"/>
+    </TableRow>
+</TableLayout>

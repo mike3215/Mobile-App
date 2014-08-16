@@ -50,5 +50,17 @@ public class NavigationActivity extends Activity{
                 startActivity(TenantLookupActivity);
             }
         });
+
+        buttonInqRes.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                // Create an Intent to take us over to a new TenantSelectActivity
+                Intent TenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
+                TenantLookupActivity.putExtra("UsedFor", TenantLookupUsedFor.InqRes);
+                startActivity(TenantLookupActivity);
+            }
+        });
     }
 }

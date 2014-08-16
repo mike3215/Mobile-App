@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,37 +18,28 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import citruscups.com.sitelinkmobile.R;
-import citruscups.com.sitelinkmobile.adapters.TenantLookupAdapter;
+import citruscups.com.sitelinkmobile.adapters.UnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
-public class TenantLookupActivity extends Activity implements SearchView.OnQueryTextListener
+public class UnitLookupActivity extends Activity implements SearchView.OnQueryTextListener
 {
+    private UnitLookupUsedFor mUsedFor;
+    private SharedPreferences mSharedPreferences;
+    private UnitLookupAdapter mAdapter;
+    private ListView mListView;
     private DataSet mDataSet;
     private ProgressDialog mProgressBar;
     private MenuItem mMenuItem;
-    private SharedPreferences mSharedPreferences;
-    private TenantLookupUsedFor mUsedFor;
-    private ListView mainListView;
-    private TenantLookupAdapter tenantLookupAdapter;
-
-    public DataSet getDataSet()
-    {
-        return mDataSet;
-    }
-
-    public void setDataSet(DataSet ds)
-    {
-        mDataSet = ds;
-    }
+    private long mLastPolled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_tenant_lookup);
+        setContentView(R.layout.activity_unit_lookup);
 
         ActionBar actionBar = getActionBar();
         if (actionBar != null)
@@ -58,19 +48,21 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        if (this.getIntent().hasExtra("UsedFor")) {
-            mUsedFor = (TenantLookupUsedFor) this.getIntent().getExtras().get("UsedFor");
-        } else {
-            mUsedFor = TenantLookupUsedFor.TenantLookup;
+        if (this.getIntent().hasExtra("UsedFor"))
+        {
+            mUsedFor = (UnitLookupUsedFor) this.getIntent().getExtras().get("UsedFor");
+        }
+        else
+        {
+            mUsedFor = UnitLookupUsedFor.MoveIn;
         }
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
-        tenantLookupAdapter = new TenantLookupAdapter(this, getLayoutInflater());
-        mainListView = (ListView) findViewById(R.id.listView);
-
-        mainListView.setAdapter(tenantLookupAdapter);
-        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        mAdapter = new UnitLookupAdapter(this, getLayoutInflater());
+        mListView = (ListView) findViewById(R.id.listView);
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
@@ -81,25 +73,11 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 Intent intent = null;
                 switch (mUsedFor)
                 {
-                    case Payment:
-                        intent = new Intent(TenantLookupActivity.this, PaymentUnitLookupActivity.class);
-                        intent.putExtra("TenantID", tenantId);
-                        intent.putExtra("TenantMap", selectedRow);
-                        startActivity(intent);
-                        break;
-
-                    case TenantLookup:
-                        intent = new Intent(TenantLookupActivity.this, NewTenantActivity.class);
-                        intent.putExtra("TenantID", tenantId);
-                        intent.putExtra("TenantMap", selectedRow);
-                        startActivity(intent);
-                        break;
-
                     case InqRes:
-                        intent = new Intent(TenantLookupActivity.this, UnitLookupActivity.class);
+                        /*intent = new Intent(TenantLookupActivity.this, UnitLookupActivity.class);
                         intent.putExtra("TenantID", tenantId);
                         intent.putExtra("TenantMap", selectedRow);
-                        startActivity(intent);
+                        startActivity(intent);*/
                         break;
 
                     case MoveIn:
@@ -108,18 +86,16 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 }
             }
         });
-        mainListView.setTextFilterEnabled(true);
+        mListView.setTextFilterEnabled(true);
 
-        new GetTenants().execute();
+        new GetUnits().execute();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
-        super.onCreateOptionsMenu(menu);
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.tenant_lookup, menu);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.unit_lookup, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         if (searchView != null)
@@ -129,28 +105,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             searchView.setSubmitButtonEnabled(true);
             searchView.setQueryHint("Search Here");
         }
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String s)
-    {
-        tenantLookupAdapter.getFilter().filter(s);
-
         return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s)
-    {
-        if (s.equals(""))
-        {
-            mainListView.clearTextFilter();
-            tenantLookupAdapter.getFilter().filter(s);
-        }
-
-        return false;
     }
 
     @Override
@@ -158,10 +113,6 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     {
         switch (item.getItemId())
         {
-            case R.id.action_add_tenant:
-                Intent newTenantActivity = new Intent(this, NewTenantActivity.class);
-                startActivity(newTenantActivity);
-                return true;
             case R.id.action_search:
                 return true;
             case R.id.action_refresh:
@@ -169,20 +120,39 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 mMenuItem.setActionView(R.layout.progressbar);
                 mMenuItem.expandActionView();
 
-                new GetTenants().execute();
+                new GetUnits().execute();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void UpdateTenants()
+    @Override
+    public boolean onQueryTextSubmit(String query)
     {
-        DataTable dataTable = mDataSet.getTableByName("Table");
-        tenantLookupAdapter.updateData(dataTable);
+        mAdapter.getFilter().filter(query);
+        return true;
     }
 
-    public enum TenantLookupUsedFor
+    @Override
+    public boolean onQueryTextChange(String newText)
+    {
+        if (newText.equals(""))
+        {
+            mListView.clearTextFilter();
+            mAdapter.getFilter().filter(newText);
+        }
+
+        return false;
+    }
+
+    public void UpdateUnits()
+    {
+        DataTable dataTable = mDataSet.getTableByName("Table");
+        mAdapter.updateData(dataTable);
+    }
+
+    public enum UnitLookupUsedFor
     {
         Payment,
         TenantLookup,
@@ -190,7 +160,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         MoveIn
     }
 
-    private class GetTenants extends AsyncTask<Void, Void, Void>
+    private class GetUnits extends AsyncTask<Void, Void, Void>
     {
         private DataTable dataTable;
 
@@ -199,14 +169,14 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         {
             super.onPreExecute();
 
-            mProgressBar = new ProgressDialog(TenantLookupActivity.this);
+            mProgressBar = new ProgressDialog(UnitLookupActivity.this);
             mProgressBar.setMessage("Please wait...");
             mProgressBar.setCancelable(false);
             mProgressBar.show();
         }
 
         @Override
-        protected Void doInBackground(Void... arg0)
+        protected Void doInBackground(Void... param)
         {
             //TODO remove DEMO creds before release
             final String corpCode = mSharedPreferences.getString("CorpCode", "DEMO");
@@ -219,10 +189,11 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             params.put("sLocationCode", locationCode);
             params.put("sCorpUserName", userName);
             params.put("sCorpPassword", password);
-            mDataSet = ServerStuff.callSoapMethod("TenantListDetailed", params);
+            params.put("lngLastTimePolled", "1");
+            mDataSet = ServerStuff.callSoapMethod("UnitsInformationAvailableUnitsOnly_v2", params);
             if (mDataSet != null)
             {
-                dataTable = mDataSet.getTableByName("Table");
+                int retCode = Helper.getRtValue(mDataSet);
             }
 
             return null;
@@ -233,33 +204,11 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         {
             super.onPreExecute();
 
-
             if (mProgressBar.isShowing())
                 mProgressBar.dismiss();
 
             // Cannot update views from a different thread.
-            UpdateTenants();
-
-            //String columns[] = row.keySet().toArray(new String[row.size()]);
-
-            /*
-            ArrayList<Map<String, Object>> rows = dataTable.getRows();
-            ArrayList<Map<String, String>> rows2 = new ArrayList<Map<String, String>>();
-            for (Map<String, Object> row : rows)
-            {
-                Map<String, String> tempRow = new Hashtable<String, String>();
-                for (Map.Entry<String, Object> entry : row.entrySet())
-                {
-                    tempRow.put(entry.getKey(), (String) entry.getValue());
-                }
-                rows2.add(tempRow);
-            }
-            String columns[] = new String[]{"sFName", "sLName", "sCompany", "sCity", "sPostalCode", "sPhone", "TenantID"};
-            int fields[] = new int[]{R.id.firstName, R.id.lastName, R.id.company, R.id.city, R.id.postalCode, R.id.phone, R.id.tenantId};
-            ListAdapter adapter = new SimpleAdapter(TenantLookupActivity.this, rows2, R.layout.tenant_lookup_list_item, columns, fields);
-            */
-
-
+            UpdateUnits();
 
             if (mMenuItem != null)
             {
@@ -268,5 +217,4 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             }
         }
     }
-
 }
