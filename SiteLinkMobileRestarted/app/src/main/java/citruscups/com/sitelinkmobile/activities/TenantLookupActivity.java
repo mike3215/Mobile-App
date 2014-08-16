@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -89,7 +88,10 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                         break;
 
                     case TenantLookup:
-                        Toast.makeText(getApplicationContext(), "TenantId: " + tenantId, Toast.LENGTH_SHORT).show();
+                        intent = new Intent(TenantLookupActivity.this, NewTenantActivity.class);
+                        intent.putExtra("TenantID", tenantId);
+                        intent.putExtra("TenantMap", selectedRow);
+                        startActivity(intent);
                         break;
                 }
             }
@@ -122,16 +124,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     @Override
     public boolean onQueryTextSubmit(String s)
     {
-        if (s.equals(""))
-        {
-            mainListView.clearTextFilter();
-            tenantLookupAdapter.getFilter().filter(s);
-        }
-        else
-        {
-            //mainListView.getAdapter();
-            tenantLookupAdapter.getFilter().filter(s);
-        }
+        tenantLookupAdapter.getFilter().filter(s);
 
         return true;
     }
@@ -139,6 +132,12 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     @Override
     public boolean onQueryTextChange(String s)
     {
+        if (s.equals(""))
+        {
+            mainListView.clearTextFilter();
+            tenantLookupAdapter.getFilter().filter(s);
+        }
+
         return false;
     }
 

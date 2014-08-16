@@ -32,7 +32,9 @@ public class NewTenantActivity extends Activity
     private boolean mNameFieldDirty = false;
     private boolean mNameFieldIgnoreEvents = false;
     private SharedPreferences mSharedPreferences;
-    private int TenantId;
+
+    private int mTenantId;
+    private HashMap<String, Object> mTenantMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -48,6 +50,10 @@ public class NewTenantActivity extends Activity
         }
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
+
+        Bundle bundle = getIntent().getExtras();
+        mTenantId = bundle.containsKey("TenantID") ? Integer.parseInt(bundle.get("TenantID").toString()) : 0;
+        mTenantMap = bundle.containsKey("TenantMap") ? (HashMap<String, Object>) bundle.get("TenantMap") : null;
 
         EditText name = (EditText) findViewById(R.id.name);
         name.addTextChangedListener(new TextWatcher()
@@ -92,12 +98,8 @@ public class NewTenantActivity extends Activity
                     final String middle = middleName.getText().toString().trim();
                     final String last = lastName.getText().toString().trim();
 
-                    Collection<String> buffer = new ArrayList<String>();
-                    if (first.length() > 0) buffer.add(first);
-                    if (middle.length() > 0) buffer.add(middle);
-                    if (last.length() > 0) buffer.add(last);
                     mNameFieldIgnoreEvents = true;
-                    name.setText(TextUtils.join(" ", buffer));
+                    name.setText(namePartsToDisplayName(first, middle, last));
                     mNameFieldIgnoreEvents = false;
                 }
                 else
@@ -115,6 +117,8 @@ public class NewTenantActivity extends Activity
                 }
             }
         });
+
+        fillEditFields();
     }
 
 
@@ -153,6 +157,17 @@ public class NewTenantActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+    private String namePartsToDisplayName(String firstName, String middleName, String lastName)
+    {
+        Collection<String> buffer = new ArrayList<String>();
+        if (firstName.length() > 0) buffer.add(firstName);
+        if (middleName.length() > 0) buffer.add(middleName);
+        if (lastName.length() > 0) buffer.add(lastName);
+        mNameFieldIgnoreEvents = true;
+
+        return TextUtils.join(" ", buffer);
+    }
+
     private HashMap<String, String> displayNameToNameParts(String displayName)
     {
         HashMap<String, String> nameMap = new HashMap<String, String>();
@@ -185,6 +200,40 @@ public class NewTenantActivity extends Activity
         return nameMap;
     }
 
+    private void fillEditFields()
+    {
+        if (mTenantMap == null) return;
+
+        String firstName = mTenantMap.get("sFName").toString();
+        String lastName = mTenantMap.get("sLName").toString();
+        String middleName = "";
+        if (mTenantMap.containsKey("sMI"))
+        {
+            middleName = mTenantMap.get("sMI").toString();
+            ((EditText) findViewById(R.id.middleName)).setText(middleName);
+        }
+        ((EditText) findViewById(R.id.firstName)).setText(firstName);
+        ((EditText) findViewById(R.id.lastName)).setText(lastName);
+        ((EditText) findViewById(R.id.name)).setText(namePartsToDisplayName(firstName, middleName, lastName));
+
+        if (mTenantMap.containsKey("sCompany"))
+            ((EditText) findViewById(R.id.company)).setText(mTenantMap.get("sCompany").toString());
+        if (mTenantMap.containsKey("sPhone"))
+            ((EditText) findViewById(R.id.phone)).setText(mTenantMap.get("sPhone").toString());
+        if (mTenantMap.containsKey("sEmail"))
+            ((EditText) findViewById(R.id.email)).setText(mTenantMap.get("sEmail").toString());
+        if (mTenantMap.containsKey("sAddr1"))
+            ((EditText) findViewById(R.id.address1)).setText(mTenantMap.get("sAddr1").toString());
+        if (mTenantMap.containsKey("sAddr2"))
+            ((EditText) findViewById(R.id.address2)).setText(mTenantMap.get("sAddr2").toString());
+        if (mTenantMap.containsKey("sCity"))
+            ((EditText) findViewById(R.id.city)).setText(mTenantMap.get("sCity").toString());
+        if (mTenantMap.containsKey("sRegion"))
+            ((EditText) findViewById(R.id.state)).setText(mTenantMap.get("sRegion").toString());
+        if (mTenantMap.containsKey("sPostalCode"))
+            ((EditText) findViewById(R.id.postalCode)).setText(mTenantMap.get("sPostalCode").toString());
+    }
+
     private class SaveTenant extends AsyncTask<Void, Void, Void>
     {
         @Override
@@ -213,6 +262,11 @@ public class NewTenantActivity extends Activity
             parameters.put("sLocationCode", locationCode);
             parameters.put("sCorpUserName", userName);
             parameters.put("sCorpPassword", password);
+            if (mTenantId > 0)
+            {
+                parameters.put("iTenantID", mTenantId);
+                parameters.put("sGateCode", mTenantMap.get("sAccessCode"));
+            }
             parameters.put("sWebPassword", "");
             parameters.put("sMrMrs", "");
             parameters.put("sFName", firstName);
@@ -261,7 +315,8 @@ public class NewTenantActivity extends Activity
             parameters.put("sLicRegion", "");
             parameters.put("sSSN", "");
 
-            DataSet result = ServerStuff.callSoapMethod("TenantNewDetailed", parameters);
+            String method = mTenantId == 0 ? "TenantNewDetailed" : "TenantUpdate";
+            DataSet result = ServerStuff.callSoapMethod(method, parameters);
             if (result != null)
             {
                 DataTable rtTable = result.getTableByName("RT");
@@ -275,7 +330,7 @@ public class NewTenantActivity extends Activity
                         {
                             if (row.containsKey("TenantID"))
                             {
-                                TenantId = Integer.parseInt(row.get("TenantID").toString());
+                                mTenantId = Integer.parseInt(row.get("TenantID").toString());
 
                                 finish();
                                 return null;
