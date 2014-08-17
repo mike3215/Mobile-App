@@ -9,16 +9,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
@@ -70,6 +65,7 @@ public class PaymentUnitLookupActivity extends Activity {
                 Toast.makeText(getApplicationContext(), "LedgerID " + ledgerID, Toast.LENGTH_SHORT).show();
                 */
                 Intent intent = new Intent(PaymentUnitLookupActivity.this, PaymentActivity.class);
+                intent.putExtra("acctBalTable", mDataSet.getTableByName("AcctBal"));
                 startActivity(intent);
             }
         });
@@ -78,8 +74,8 @@ public class PaymentUnitLookupActivity extends Activity {
         new GetAccountBalances().execute();
     }
 
-    private void UpdateBalances(ArrayList<Map<String, String>> rows) {
-        mAdapter.updateData(rows);
+    private void UpdateBalances(DataTable dataTable) {
+        mAdapter.updateData(dataTable);
     }
 
     private class GetAccountBalances extends AsyncTask<Void, Void, Void>
@@ -135,38 +131,33 @@ public class PaymentUnitLookupActivity extends Activity {
             //String columns[] = row.keySet().toArray(new String[row.size()]);
 
             ArrayList<Map<String, Object>> rows = dataTable.getRows();
-            ArrayList<Map<String, String>> rows2 = new ArrayList<Map<String, String>>();
-            List<Double> values = new ArrayList<Double>();
+            DataTable dataTable = new DataTable();
+            dataTable.setName("AcctBal");
             String unitID = "";
+            Map<String, Object> newRow = new Hashtable<String, Object>();
             for (Map<String, Object> row : rows)
             {
-                if (unitID.equals(row.get("UnitID"))) {
-                    values.add(Double.parseDouble((String) row.get("dcBalance")));
-                } else {
+                if (!unitID.equals(row.get("UnitID"))) {
                     unitID = (String) row.get("UnitID");
-                    values = new ArrayList<Double>();
-                    values.add(Double.parseDouble((String) row.get("dcBalance")));
+                    newRow = new Hashtable<String, Object>();
                 }
+
+                newRow.put(row.get("sCategory") + "Bal", Double.parseDouble((String) row.get("dcBalance")));
+                newRow.put(row.get("sCategory") + "Amt", Double.parseDouble((String) row.get("dcAmt")));
 
                 // Other Fees is always the last entry for a given unit
                 if ("Other Fees".equalsIgnoreCase((String) row.get("sItem"))) {
-                    Map<String, String> tempRow = new Hashtable<String, String>();
-                    tempRow.put("sUnitName", (String) row.get("sUnitName"));
-                    tempRow.put("sRent", String.format("%.2f", values.get(2)));
-                    tempRow.put("sInsurance", String.format("%.2f", values.get(3)));
-                    tempRow.put("sFees", String.format("%.2f", values.get(4) + values.get(5) + values.get(6)));
-                    tempRow.put("sOther", String.format("%.2f", values.get(0) + values.get(1)));
-                    tempRow.put("sBalance", String.format("%.2f", values.get(0) + values.get(1) + values.get(2)
-                                                                    + values.get(3) + values.get(4) + values.get(5)
-                                                                    + values.get(6)));
-                    tempRow.put("UnitID", (String) row.get("UnitID"));
-                    tempRow.put("LedgerID", (String) row.get("LedgerID"));
-                    rows2.add(tempRow);
+                    newRow.put("sUnitName", row.get("sUnitName"));
+                    newRow.put("UnitID", row.get("UnitID"));
+                    newRow.put("LedgerID", row.get("LedgerID"));
+                    dataTable.addRow(newRow);
                 }
 
             }
 
-            UpdateBalances(rows2);
+            mDataSet = new DataSet();
+            mDataSet.addTable(dataTable);
+            UpdateBalances(dataTable);
             /*
             String columns[] = new String[]{"sUnitName", "sBalance"};
             int fields[] = new int[]{android.R.id.text1, android.R.id.text2};

@@ -1,12 +1,16 @@
 package citruscups.com.sitelinkmobile.dataStructures;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.Map;
 
 /**
  * Created by Jakkyl on 8/8/2014.
  */
-public class DataTable
+public class DataTable implements Parcelable
 {
     private ArrayList<Map<String, Object>> _rows;
     private String _name;
@@ -66,4 +70,40 @@ public class DataTable
 
         return result + " }";
     }
+
+    public DataTable(Parcel in) {
+        _rows = new ArrayList<Map<String, Object>>();
+        readFromParcel(in);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle b = new Bundle();
+        b.putString("_name", _name);
+        b.putSerializable("_rows", _rows);
+        dest.writeBundle(b);
+    }
+
+    public void readFromParcel(Parcel in) {
+        Bundle b = in.readBundle();
+        _name = b.getString("_name");
+        _rows = (ArrayList<Map<String, Object>>) b.getSerializable("_rows");
+    }
+
+    public static final Creator CREATOR = new Creator() {
+        @Override
+        public DataTable createFromParcel(Parcel parcel) {
+            return new DataTable(parcel);
+        }
+
+        @Override
+        public DataTable[] newArray(int size) {
+            return new DataTable[size];
+        }
+    };
 }

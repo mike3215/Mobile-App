@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
+import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 
 /**
  * Created by Michael on 8/13/2014.
@@ -19,22 +20,22 @@ public class PaymentUnitLookupAdapter extends BaseAdapter {
 
     Context mContext;
     LayoutInflater mInflater;
-    ArrayList<Map<String, String>> mRows;
+    DataTable mDataTable;
 
     public PaymentUnitLookupAdapter(Context context, LayoutInflater inflater) {
         mContext = context;
         mInflater = inflater;
-        mRows = new ArrayList<Map<String, String>>();
+        mDataTable = new DataTable();
     }
 
     @Override
     public int getCount() {
-        return mRows.size();
+        return mDataTable.getCount();
     }
 
     @Override
-    public Map<String, String> getItem(int i) {
-        return mRows.get(i);
+    public Map<String, Object> getItem(int i) {
+        return mDataTable.getRow(i);
     }
 
     @Override
@@ -72,48 +73,34 @@ public class PaymentUnitLookupAdapter extends BaseAdapter {
         }
 
         // Get the current acct balance data in DataTable Row form
-        Map<String, String> selectedRow = getItem(i);
+        Map<String, Object> selectedRow = getItem(i);
 
-        String unitName = "A123";
-        String rentAmt = "$0.00";
-        String insuranceAmt = "$0.00";
-        String feesAmt = "$0.00";
-        String otherAmt = "$0.00";
-        String balanceAmt = "$0.00";
-        String unitID = "-999";
-        String ledgerID = "-999";
+        String unitName;
+        String rentAmt, insuranceAmt, feesAmt, otherAmt, balanceAmt;
+        String unitID, ledgerID;
+        Double rent, insurance, fees, other;
 
-        if (selectedRow.containsKey("sUnitName")) {
-            unitName = selectedRow.get("sUnitName");
-        }
+        unitName = (String) selectedRow.get("sUnitName");
 
-        if (selectedRow.containsKey("sRent")) {
-            rentAmt = "$" + selectedRow.get("sRent");
-        }
+        rent = (Double) selectedRow.get("RentBal");
+        rentAmt = "$" + String.format("%.2f", rent);
 
-        if (selectedRow.containsKey("sInsurance")) {
-            insuranceAmt = "$" + selectedRow.get("sInsurance");
-        }
+        insurance = (Double) selectedRow.get("InsuranceBal");
+        insuranceAmt = "$" + String.format("%.2f", insurance);
 
-        if (selectedRow.containsKey("sFees")) {
-            feesAmt = "$" + selectedRow.get("sFees");
-        }
+        // Combine all fee columns into one total
+        fees = (Double) selectedRow.get("RecurringBal") +
+                (Double) selectedRow.get("LateFeeBal") + (Double) selectedRow.get("OtherFeesBal");
+        feesAmt = "$" + String.format("%.2f", fees);
 
-        if (selectedRow.containsKey("sOther")) {
-            otherAmt = "$" + selectedRow.get("sOther");
-        }
+        // Group merchandise and sec dep into an Other amt
+        other = (Double) selectedRow.get("POSBal") + (Double) selectedRow.get("SecDepBal");
+        otherAmt = "$" + String.format("%.2f", other);
 
-        if (selectedRow.containsKey("sBalance")) {
-            balanceAmt = "$" + selectedRow.get("sBalance");
-        }
+        balanceAmt = "$" + String.format("%.2f", (rent + insurance + fees + other));
 
-        if (selectedRow.containsKey("UnitID")) {
-            unitID = selectedRow.get("UnitID");
-        }
-
-        if (selectedRow.containsKey("LedgerID")) {
-            ledgerID = selectedRow.get("LedgerID");
-        }
+        unitID = (String) selectedRow.get("UnitID");
+        ledgerID = (String) selectedRow.get("LedgerID");
 
         holder.unitNameTextView.setText(unitName);
         holder.rentAmtTextView.setText(rentAmt);
@@ -127,8 +114,8 @@ public class PaymentUnitLookupAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void updateData(ArrayList<Map<String, String>> rows) {
-        mRows = rows;
+    public void updateData(DataTable dataTable) {
+        mDataTable = dataTable;
         notifyDataSetChanged();
     }
 
