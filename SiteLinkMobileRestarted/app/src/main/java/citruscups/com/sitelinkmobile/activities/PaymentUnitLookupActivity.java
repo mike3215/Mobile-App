@@ -31,6 +31,7 @@ public class PaymentUnitLookupActivity extends Activity {
     private SharedPreferences mSharedPreferences;
     private ListView mainListView;
     private PaymentUnitLookupAdapter mAdapter;
+    private String mTenantID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,6 +45,10 @@ public class PaymentUnitLookupActivity extends Activity {
         {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
+        }
+
+        if (getIntent().hasExtra("TenantID")) {
+            mTenantID = getIntent().getExtras().getString("TenantID");
         }
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
@@ -64,8 +69,12 @@ public class PaymentUnitLookupActivity extends Activity {
                 String ledgerID = selectedRow.get("LedgerID");
                 Toast.makeText(getApplicationContext(), "LedgerID " + ledgerID, Toast.LENGTH_SHORT).show();
                 */
+                Map<String, String> selectedRow = (Map<String, String>) adapterView.getItemAtPosition(i);
+                int ledgerID = Integer.parseInt(selectedRow.get("LedgerID"));
                 Intent intent = new Intent(PaymentUnitLookupActivity.this, PaymentActivity.class);
                 intent.putExtra("acctBalTable", mDataSet.getTableByName("AcctBal"));
+                intent.putExtra("LedgerID", ledgerID);
+                intent.putExtra("TenantID", mTenantID);
                 startActivity(intent);
             }
         });
@@ -101,7 +110,7 @@ public class PaymentUnitLookupActivity extends Activity {
             final String locationCode = mSharedPreferences.getString("LocationCode", "DEMO");
             final String userName = mSharedPreferences.getString("UserName", "DEMO");
             final String password = mSharedPreferences.getString("Password", "DEMO");
-            final String TenantID = (String) PaymentUnitLookupActivity.this.getIntent().getExtras().get("TenantID");
+            final String TenantID = mTenantID;
             final Integer numMonthsPrepay = 0;
 
             LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();

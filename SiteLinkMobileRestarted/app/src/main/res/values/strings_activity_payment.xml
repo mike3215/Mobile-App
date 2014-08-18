@@ -2,8 +2,8 @@
 <resources>
 
     <string name="paymentBillOverviewLabel">Bill Overview:</string>
-    <string name="paymentCurrentBillLabel">Current Bill:</string>
-    <string name="paymentDueDateLabel">Payment Due Date:</string>
+    <string name="paymentCurrentBillLabel">Current Balance:</string>
+    <string name="paymentDueDateLabel">Paid Thru Date:</string>
     <string name="paymentTotalAmtDueLabel">Total Amount Due:</string>
     <string name="paymentRecentPaymentLabel">Recent Payment on</string>
     <string name="paymentPayNow">Pay Your Bill Now</string>

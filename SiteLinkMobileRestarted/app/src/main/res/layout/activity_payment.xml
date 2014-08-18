@@ -31,14 +31,15 @@
                 android:id="@+id/paymentCurrentBillLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:gravity="start"
                 android:layout_weight="1"
                 android:text="@string/paymentCurrentBillLabel"/>
 
             <TextView
+                android:id="@+id/paymentCurrentBillAmt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_weight="1"
                 android:text="$0.00"/>
 
@@ -64,16 +65,17 @@
                 android:id="@+id/paymentDueDateLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:gravity="start"
                 android:layout_weight="1"
                 android:text="@string/paymentDueDateLabel"/>
 
             <TextView
+                android:id="@+id/paymentPaidThruDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_weight="1"
-                android:text="$0.00"/>
+                android:text="01/01/1970"/>
 
         </LinearLayout>
 
@@ -97,14 +99,15 @@
                 android:id="@+id/paymentTotalAmtDueLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:gravity="start"
                 android:layout_weight="1"
                 android:text="@string/paymentTotalAmtDueLabel"/>
 
             <TextView
+                android:id="@+id/paymentTotalAmtDue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_weight="1"
                 android:text="$0.00"/>
 
@@ -130,16 +133,17 @@
                 android:id="@+id/paymentRecentPaymentLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
+                android:gravity="start"
                 android:layout_weight="1"
                 android:text="@string/paymentRecentPaymentLabel"/>
 
             <TextView
+                android:id="@+id/paymentPmtLast"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="right"
+                android:gravity="end"
                 android:layout_weight="1"
-                android:text="$0.00"/>
+                android:text="01/01/1970"/>
 
         </LinearLayout>
 
@@ -152,34 +156,42 @@
         android:text="@string/paymentPayNow"
         android:textStyle="bold"/>
 
-    <RadioGroup
-        android:layout_width="fill_parent"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RadioButton
+        <RadioGroup
+            android:id="@+id/paymentOptions_radio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/paymentRadioPayTotal"/>
+            android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
             <RadioButton
+                android:id="@+id/radio_TotalAmt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/paymentRadioPayTotal"/>
+
+
+            <RadioButton
+                android:id="@+id/radio_OtherAmt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/paymentRadioDifferentAmt"/>
+        </RadioGroup>
 
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="7dp"
-                android:inputType="numberDecimal"
-                android:minWidth="60dp"/>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="7dp"
+            android:layout_marginLeft="7dp"
+            android:layout_alignBottom="@+id/paymentOptions_radio"
+            android:layout_toRightOf="@+id/paymentOptions_radio"
+            android:inputType="numberDecimal"
+            android:minWidth="60dp"/>
+    </RelativeLayout>
 
-        </LinearLayout>
-
-    </RadioGroup>
 
     <Button
         android:id="@+id/btnPaymentContinue"
