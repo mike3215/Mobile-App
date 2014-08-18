@@ -104,6 +104,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:enabled="false"
+            android:focusable="false"
             android:text="Climate"/>
 
         <CheckBox
@@ -112,6 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:enabled="false"
+            android:focusable="false"
             android:text="Inside"/>
 
         <CheckBox
@@ -120,6 +122,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:enabled="false"
+            android:focusable="false"
             android:text="Power"/>
 
         <CheckBox
@@ -128,6 +131,7 @@
             android:layout_height="wrap_content"
             android:layout_column="0"
             android:enabled="false"
+            android:focusable="false"
             android:text="Alarm"/>
     </TableRow>
 </TableLayout>

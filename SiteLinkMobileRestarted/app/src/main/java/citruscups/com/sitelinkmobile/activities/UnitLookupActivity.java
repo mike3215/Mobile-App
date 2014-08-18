@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -66,8 +67,9 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
             {
                 HashMap<String, Object> selectedRow = (HashMap<String, Object>) adapterView.getItemAtPosition(i);
-                String tenantId = (String) selectedRow.get("TenantID");
+                String unitId = (String) selectedRow.get("UnitID");
 
+                Toast.makeText(getApplicationContext(), "UnitId: " + unitId, Toast.LENGTH_SHORT).show();
                 Intent intent = null;
                 switch (mUsedFor)
                 {
