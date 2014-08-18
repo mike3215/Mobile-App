@@ -59,6 +59,14 @@
     <TableRow>
 
         <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:paddingBottom="2dip"
+            android:text="Rate: "
+            android:textColor="#acacac"/>
+
+        <TextView
             android:id="@+id/standardRate"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -69,12 +77,19 @@
             android:textColor="#acacac"/>
 
         <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:paddingBottom="2dip"
+            android:text="Floor: "
+            android:textColor="#acacac"/>
+
+        <TextView
             android:id="@+id/floor"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center|left"
             android:paddingBottom="2dip"
-            android:paddingRight="5dip"
             android:text="postal: "
             android:textColor="#acacac"/>
     </TableRow>
@@ -88,6 +103,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
+            android:enabled="false"
             android:text="Climate"/>
 
         <CheckBox
@@ -95,6 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
+            android:enabled="false"
             android:text="Inside"/>
 
         <CheckBox
@@ -102,6 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
+            android:enabled="false"
             android:text="Power"/>
 
         <CheckBox
@@ -109,6 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_column="0"
+            android:enabled="false"
             android:text="Alarm"/>
     </TableRow>
 </TableLayout>

@@ -59,9 +59,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
-        mAdapter = new UnitLookupAdapter(this, getLayoutInflater());
         mListView = (ListView) findViewById(R.id.listView);
-        mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -162,8 +160,6 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
 
     private class GetUnits extends AsyncTask<Void, Void, Void>
     {
-        private DataTable dataTable;
-
         @Override
         protected void onPreExecute()
         {
@@ -206,6 +202,16 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
 
             if (mProgressBar.isShowing())
                 mProgressBar.dismiss();
+
+
+            if (mAdapter == null)
+            {
+                final String[] columns = new String[]{"sUnitName", "sTypeName", "dcWidth", "dcLength", "dcStdRate", "iFloor", "bClimate", "bInside", "bPower", "bAlarm"};
+                final int[] to = new int[]{R.id.unitName, R.id.typeName, R.id.width, R.id.length, R.id.standardRate, R.id.floor, R.id.climate, R.id.inside, R.id.power, R.id.alarm};
+                mAdapter = new UnitLookupAdapter(UnitLookupActivity.this, mDataSet.getTables().get(0), R.layout.unit_lookup_list_item, columns, to);
+                mListView.setAdapter(mAdapter);
+
+            }
 
             // Cannot update views from a different thread.
             UpdateUnits();
