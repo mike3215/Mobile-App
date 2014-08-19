@@ -16,6 +16,7 @@ import android.widget.TextView;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+import citruscups.com.sitelinkmobile.interfaces.ICommand;
 
 /**
  * Created by Jakkyl on 8/16/2014.
@@ -25,6 +26,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
     private final Object lock = new Object();
     private String mColumns[] = new String[]{"sFName", "sLName", "sCompany", "sCity", "sPostalCode", "sPhone", "TenantID"};
     private int mTo[];
+    private Map<Integer, ICommand> mCommandMap;
     private LayoutInflater mInflater;
     private DataTable mDataTable;
     private DataTable mDataTableOriginal;
@@ -185,12 +187,27 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
     public void setViewText(TextView view, String value)
     {
         view.setText(value);
+        if (mCommandMap != null)
+        {
+            final int id = view.getId();
+            if (mCommandMap.containsKey(id))
+            {
+                view.setTextColor(mCommandMap.get(id).executeColor(value));
+            }
+        }
     }
 
     public void updateData(DataTable dataTable)
     {
         mDataTable = dataTable;
         notifyDataSetChanged();
+    }
+
+    public Map<Integer, ICommand> getCommandMap() { return mCommandMap; }
+
+    public void setCommandMap(Map<Integer, ICommand> commandMap)
+    {
+        mCommandMap = commandMap;
     }
 
     private class CitrisFilter extends Filter
@@ -278,7 +295,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
             }
             else if (view instanceof TextView)
             {
-                ((TextView) view).setText(textRepresentation);
+                setViewText((TextView) view, textRepresentation);
             }
 
             return true;

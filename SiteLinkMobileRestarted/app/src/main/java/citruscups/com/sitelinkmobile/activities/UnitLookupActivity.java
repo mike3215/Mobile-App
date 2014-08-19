@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,13 +17,16 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.adapters.UnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 import citruscups.com.sitelinkmobile.helper.Helper;
+import citruscups.com.sitelinkmobile.interfaces.ICommand;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class UnitLookupActivity extends Activity implements SearchView.OnQueryTextListener
@@ -211,8 +215,20 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                 final String[] columns = new String[]{"sUnitName", "sTypeName", "dcWidth", "dcLength", "dcStdRate", "iFloor", "bClimate", "bInside", "bPower", "bAlarm"};
                 final int[] to = new int[]{R.id.unitName, R.id.typeName, R.id.width, R.id.length, R.id.standardRate, R.id.floor, R.id.climate, R.id.inside, R.id.power, R.id.alarm};
                 mAdapter = new UnitLookupAdapter(UnitLookupActivity.this, mDataSet.getTables().get(0), R.layout.unit_lookup_list_item, columns, to);
+                Map<Integer, ICommand> commandMap = new Hashtable<Integer, ICommand>();
+                commandMap.put(R.id.standardRate, new ICommand()
+                {
+                    @Override
+                    public int executeColor(String text)
+                    {
+                        if (Double.parseDouble(text) > 75.00)
+                            return Color.RED;
+                        else
+                            return Color.BLACK;
+                    }
+                });
+                mAdapter.setCommandMap(commandMap);
                 mListView.setAdapter(mAdapter);
-
             }
 
             // Cannot update views from a different thread.
