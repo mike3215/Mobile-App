@@ -309,7 +309,7 @@ public class NewTenantActivity extends Activity
             parameters.put("sMobile", "");
             parameters.put("bCommercial", false);
             parameters.put("bCompanyIsTenant", false);
-            parameters.put("dDOB", "1975-01-01T00:00:00\n");
+            parameters.put("dDOB", "1975-01-01T00:00:00");
             parameters.put("sTenNote", "");
             parameters.put("sLicense", "");
             parameters.put("sLicRegion", "");

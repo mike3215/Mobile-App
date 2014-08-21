@@ -16,5 +16,6 @@
     <string name="title_activity_payment">Payments</string>
     <string name="title_activity_unit_lookup">UnitLookupActivity</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_reservation">ReservationActivity</string>
 
 </resources>

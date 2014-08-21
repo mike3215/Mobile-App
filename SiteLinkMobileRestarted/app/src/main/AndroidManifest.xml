@@ -56,6 +56,11 @@
             android:label="@string/title_activity_unit_lookup"
             android:parentActivityName=".activities.NavigationActivity">
         </activity>
+        <activity
+            android:name=".activities.ReservationActivity"
+            android:label="@string/title_activity_reservation"
+            android:parentActivityName=".activities.UnitLookupActivity">
+        </activity>
     </application>
 
 </manifest>

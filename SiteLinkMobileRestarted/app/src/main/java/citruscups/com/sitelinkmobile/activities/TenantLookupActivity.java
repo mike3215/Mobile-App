@@ -78,7 +78,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 HashMap<String, Object> selectedRow = (HashMap<String, Object>) adapterView.getItemAtPosition(i);
                 String tenantId = (String) selectedRow.get("TenantID");
 
-                Intent intent = null;
+                Intent intent;
                 switch (mUsedFor)
                 {
                     case Payment:
@@ -99,6 +99,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                         intent = new Intent(TenantLookupActivity.this, UnitLookupActivity.class);
                         intent.putExtra("TenantID", tenantId);
                         intent.putExtra("TenantMap", selectedRow);
+                        intent.putExtra("UsedFor", UnitLookupActivity.UnitLookupUsedFor.InqRes);
                         startActivity(intent);
                         break;
 

@@ -39,6 +39,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
     private ProgressDialog mProgressBar;
     private MenuItem mMenuItem;
     private long mLastPolled;
+    private int mTenantId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -53,14 +54,9 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        if (this.getIntent().hasExtra("UsedFor"))
-        {
-            mUsedFor = (UnitLookupUsedFor) this.getIntent().getExtras().get("UsedFor");
-        }
-        else
-        {
-            mUsedFor = UnitLookupUsedFor.MoveIn;
-        }
+        final Bundle extras = getIntent().getExtras();
+        mUsedFor = extras.containsKey("UsedFor") ? (UnitLookupUsedFor) extras.get("UsedFor") : UnitLookupUsedFor.MoveIn;
+        mTenantId = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
@@ -74,14 +70,17 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                 String unitId = (String) selectedRow.get("UnitID");
 
                 Toast.makeText(getApplicationContext(), "UnitId: " + unitId, Toast.LENGTH_SHORT).show();
-                Intent intent = null;
+                Intent intent;
                 switch (mUsedFor)
                 {
                     case InqRes:
-                        /*intent = new Intent(TenantLookupActivity.this, UnitLookupActivity.class);
-                        intent.putExtra("TenantID", tenantId);
-                        intent.putExtra("TenantMap", selectedRow);
-                        startActivity(intent);*/
+                        intent = new Intent(UnitLookupActivity.this, ReservationActivity.class);
+                        intent.putExtra("TenantID", mTenantId);
+                        intent.putExtra("UnitID", unitId);
+                        intent.putExtra("UnitMap", selectedRow);
+                        if (extras.containsKey("TenantMap"))
+                            intent.putExtra("TenantMap", (HashMap<String, Object>) extras.get("TenantMap"));
+                        startActivity(intent);
                         break;
 
                     case MoveIn:
