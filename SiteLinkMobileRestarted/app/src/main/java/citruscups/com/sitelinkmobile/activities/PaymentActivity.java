@@ -3,6 +3,7 @@ package citruscups.com.sitelinkmobile.activities;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -50,9 +51,6 @@ public class PaymentActivity extends Activity {
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
-        // Access the Buttons from XML
-        Button buttonPayment = (Button) findViewById(R.id.btnPaymentContinue);
-
         if (getIntent().hasExtra("acctBalTable")) {
             mDataTable = (DataTable) getIntent().getExtras().get("acctBalTable");
         }
@@ -65,24 +63,25 @@ public class PaymentActivity extends Activity {
             mTenantID = getIntent().getStringExtra("TenantID");
         }
 
+        // Access the Buttons from XML
+        Button buttonPayment = (Button) findViewById(R.id.btnPaymentContinue);
+
         buttonPayment.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
-                /*
-                // Create an Intent to take us over to a new TenantSelectActivity
-                Intent TenantLookupActivity = new Intent(PaymentActivity.this, "Not Created Yet".class);
-                TenantLookupActivity.putExtra("UsedFor", citruscups.com.sitelinkmobile.activities.TenantLookupActivity.TenantLookupUsedFor.TenantLookup);
-                startActivity(TenantLookupActivity);
-                */
+
+                // Create an Intent to take us over to a new CreditCardInfoActivity
+                Intent CreditCardInfoActivity = new Intent(PaymentActivity.this, CreditCardInfoActivity.class);
+                startActivity(CreditCardInfoActivity);
             }
         });
 
         new GetLedgerInfo().execute();
     }
 
-    private void UpdateGUI(DataTable dataTable) {
+    private void updateGUI(DataTable dataTable) {
         TextView currentBill = (TextView) findViewById(R.id.paymentCurrentBillAmt);
         TextView paidThruDate = (TextView) findViewById(R.id.paymentPaidThruDate);
         TextView totalDue = (TextView) findViewById(R.id.paymentTotalAmtDue);
@@ -162,7 +161,7 @@ public class PaymentActivity extends Activity {
             if (mProgressBar.isShowing())
                 mProgressBar.dismiss();
 
-            UpdateGUI(dataTable);
+            updateGUI(dataTable);
 
         }
     }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="billing_header">Pay with Credit or Debit Card</string>
+    <string name="billing_card_number">Card Number</string>
+    <string name="billing_name_on_card">Name on Card</string>
+    <string name="billing_exp_date">Card Expiration Date</string>
+    <string name="billing_cvv_number">CID Security Code</string>
+    <string name="billing_address">Billing Address</string>
+    <string name="billing_postal_code">Billing Postal Code</string>
+    <string name="billing_save_for_autobill">Save this card for auto billing</string>
+    <string name="billing_button">Continue</string>
+
+    <string-array name="months">
+        <item>01 - January</item>
+        <item>02 - February</item>
+        <item>03 - March</item>
+        <item>04 - April</item>
+        <item>05 - May</item>
+        <item>06 - June</item>
+        <item>07 - July</item>
+        <item>08 - August</item>
+        <item>09 - September</item>
+        <item>10 - October</item>
+        <item>11 - November</item>
+        <item>12 - December</item>
+    </string-array>
+
+</resources>

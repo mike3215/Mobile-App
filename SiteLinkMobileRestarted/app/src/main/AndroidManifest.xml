@@ -57,6 +57,12 @@
             android:parentActivityName=".activities.NavigationActivity">
         </activity>
         <activity
+            android:name=".activities.CreditCardInfoActivity"
+            android:label = "@string/title_activity_creditcard_info"
+            android:parentActivityName=".activities.PaymentUnitLookupActivity">
+
+        </activity>
+        <activity
             android:name=".activities.ReservationActivity"
             android:label="@string/title_activity_reservation"
             android:parentActivityName=".activities.UnitLookupActivity">

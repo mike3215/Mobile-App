@@ -43,7 +43,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
         mTo = to;
         mResource = resource;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mViewBinder = new CitrisViewBinder();
+        mViewBinder = new CitrusViewBinder();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
     {
         if (mFilter == null)
         {
-            mFilter = new CitrisFilter();
+            mFilter = new CitrusFilter();
         }
         return mFilter;
     }
@@ -210,7 +210,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
         mCommandMap = commandMap;
     }
 
-    private class CitrisFilter extends Filter
+    private class CitrusFilter extends Filter
     {
         @SuppressWarnings("unchecked")
         @Override
@@ -283,7 +283,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
         }
     }
 
-    class CitrisViewBinder implements SimpleAdapter.ViewBinder
+    class CitrusViewBinder implements SimpleAdapter.ViewBinder
     {
 
         @Override
