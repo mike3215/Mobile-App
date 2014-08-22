@@ -2,6 +2,7 @@ package citruscups.com.sitelinkmobile.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -25,13 +26,15 @@ import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.adapters.UnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+import citruscups.com.sitelinkmobile.helper.Constants;
 import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.interfaces.ICommand;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class UnitLookupActivity extends Activity implements SearchView.OnQueryTextListener
 {
-    private UnitLookupUsedFor mUsedFor;
+    private Fragment mFragment;
+    private Constants.UsedFor mUsedFor;
     private SharedPreferences mSharedPreferences;
     private UnitLookupAdapter mAdapter;
     private ListView mListView;
@@ -55,9 +58,11 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
         }
 
         final Bundle extras = getIntent().getExtras();
-        mUsedFor = extras.containsKey("UsedFor") ? (UnitLookupUsedFor) extras.get("UsedFor") : UnitLookupUsedFor.MoveIn;
-        mTenantId = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
-
+        if (extras != null)
+        {
+            mUsedFor = extras.containsKey("UsedFor") ? (Constants.UsedFor) extras.get("UsedFor") : Constants.UsedFor.MoveIn;
+            mTenantId = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
+        }
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
         mListView = (ListView) findViewById(R.id.listView);
@@ -78,7 +83,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                         intent.putExtra("TenantID", mTenantId);
                         intent.putExtra("UnitID", unitId);
                         intent.putExtra("UnitMap", selectedRow);
-                        if (extras.containsKey("TenantMap"))
+                        if (extras != null && extras.containsKey("TenantMap"))
                             intent.putExtra("TenantMap", (HashMap<String, Object>) extras.get("TenantMap"));
                         startActivity(intent);
                         break;
@@ -91,7 +96,15 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
         });
         mListView.setTextFilterEnabled(true);
 
-        new GetUnits().execute();
+        if (savedInstanceState != null && savedInstanceState.containsKey("data"))
+            mDataSet = (DataSet) savedInstanceState.get("data");
+        if (mDataSet == null)
+            new GetUnits().execute();
+        else
+        {
+            createAdapter();
+            UpdateUnits();
+        }
     }
 
     @Override
@@ -149,18 +162,42 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
         return false;
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle bundle)
+    {
+        super.onSaveInstanceState(bundle);
+
+        bundle.putParcelable("data", mDataSet);
+    }
+
     public void UpdateUnits()
     {
         DataTable dataTable = mDataSet.getTableByName("Table");
         mAdapter.updateData(dataTable);
     }
 
-    public enum UnitLookupUsedFor
+    private void createAdapter()
     {
-        Payment,
-        TenantLookup,
-        InqRes,
-        MoveIn
+        if (mAdapter == null)
+        {
+            final String[] columns = new String[]{"sUnitName", "sTypeName", "dcWidth", "dcLength", "dcStdRate", "iFloor", "bClimate", "bInside", "bPower", "bAlarm"};
+            final int[] to = new int[]{R.id.unitName, R.id.typeName, R.id.width, R.id.length, R.id.standardRate, R.id.floor, R.id.climate, R.id.inside, R.id.power, R.id.alarm};
+            mAdapter = new UnitLookupAdapter(UnitLookupActivity.this, mDataSet.getTables().get(0), R.layout.unit_lookup_list_item, columns, to);
+            Map<Integer, ICommand> commandMap = new Hashtable<Integer, ICommand>();
+            commandMap.put(R.id.standardRate, new ICommand()
+            {
+                @Override
+                public int executeColor(String text)
+                {
+                    if (Double.parseDouble(text) > 75.00)
+                        return Color.RED;
+                    else
+                        return Color.BLACK;
+                }
+            });
+            mAdapter.setCommandMap(commandMap);
+            mListView.setAdapter(mAdapter);
+        }
     }
 
     private class GetUnits extends AsyncTask<Void, Void, Void>
@@ -208,27 +245,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
             if (mProgressBar.isShowing())
                 mProgressBar.dismiss();
 
-
-            if (mAdapter == null)
-            {
-                final String[] columns = new String[]{"sUnitName", "sTypeName", "dcWidth", "dcLength", "dcStdRate", "iFloor", "bClimate", "bInside", "bPower", "bAlarm"};
-                final int[] to = new int[]{R.id.unitName, R.id.typeName, R.id.width, R.id.length, R.id.standardRate, R.id.floor, R.id.climate, R.id.inside, R.id.power, R.id.alarm};
-                mAdapter = new UnitLookupAdapter(UnitLookupActivity.this, mDataSet.getTables().get(0), R.layout.unit_lookup_list_item, columns, to);
-                Map<Integer, ICommand> commandMap = new Hashtable<Integer, ICommand>();
-                commandMap.put(R.id.standardRate, new ICommand()
-                {
-                    @Override
-                    public int executeColor(String text)
-                    {
-                        if (Double.parseDouble(text) > 75.00)
-                            return Color.RED;
-                        else
-                            return Color.BLACK;
-                    }
-                });
-                mAdapter.setCommandMap(commandMap);
-                mListView.setAdapter(mAdapter);
-            }
+            createAdapter();
 
             // Cannot update views from a different thread.
             UpdateUnits();
