@@ -22,6 +22,7 @@ import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.adapters.TenantLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+import citruscups.com.sitelinkmobile.helper.Constants;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class TenantLookupActivity extends Activity implements SearchView.OnQueryTextListener
@@ -99,7 +100,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                         intent = new Intent(TenantLookupActivity.this, UnitLookupActivity.class);
                         intent.putExtra("TenantID", tenantId);
                         intent.putExtra("TenantMap", selectedRow);
-                        intent.putExtra("UsedFor", UnitLookupActivity.UnitLookupUsedFor.InqRes);
+                        intent.putExtra("UsedFor", Constants.UsedFor.InqRes);
                         startActivity(intent);
                         break;
 
@@ -107,6 +108,21 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
 
                         break;
                 }
+            }
+        });
+        mainListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                HashMap<String, Object> selectedRow = (HashMap<String, Object>) parent.getItemAtPosition(position);
+                String tenantId = (String) selectedRow.get("TenantID");
+
+                Intent intent = new Intent(TenantLookupActivity.this, NewTenantActivity.class);
+                intent.putExtra("TenantID", tenantId);
+                intent.putExtra("TenantMap", selectedRow);
+                startActivity(intent);
+                return false;
             }
         });
         mainListView.setTextFilterEnabled(true);
