@@ -57,5 +57,21 @@ public class Helper
                 return "Unmapped return code";
         }
     }
+
+    public static boolean isNumeric(String str)
+    {
+        return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+    }
+
+    public static boolean isInteger(String str)
+    {
+        if (isNumeric(str))
+        {
+            double d = Double.parseDouble(str);
+            return ((d % 1) == 0);
+        }
+
+        return false;
+    }
 }
 
