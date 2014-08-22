@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.text.ParseException;
@@ -33,6 +34,7 @@ public class PaymentActivity extends Activity {
     private DataSet mDataSet;
     private int mLedgerID;
     private String mTenantID;
+    private String mUnitID;
     private ProgressDialog mProgressBar;
     private SharedPreferences mSharedPreferences;
 
@@ -63,6 +65,10 @@ public class PaymentActivity extends Activity {
             mTenantID = getIntent().getStringExtra("TenantID");
         }
 
+        if (getIntent().hasExtra("UnitID")) {
+            mUnitID = getIntent().getStringExtra("UnitID");
+        }
+
         // Access the Buttons from XML
         Button buttonPayment = (Button) findViewById(R.id.btnPaymentContinue);
 
@@ -71,10 +77,22 @@ public class PaymentActivity extends Activity {
             @Override
             public void onClick(View view)
             {
+                double pmtAmt;
+                if (((RadioButton) findViewById(R.id.radio_TotalAmt)).isChecked()) {
+                    pmtAmt = Double.parseDouble(((TextView) findViewById(R.id.paymentTotalAmtDue)).getText().toString().substring(1));
+                } else if (((RadioButton) findViewById(R.id.radio_OtherAmt)).isChecked()) {
+                    pmtAmt = Double.parseDouble(((TextView) findViewById(R.id.paymentOtherAmt)).getText().toString());
+                } else {
+                    // TODO: make toast indicating the need to select a payment option
+                    return;
+                }
 
                 // Create an Intent to take us over to a new CreditCardInfoActivity
-                Intent CreditCardInfoActivity = new Intent(PaymentActivity.this, CreditCardInfoActivity.class);
-                startActivity(CreditCardInfoActivity);
+                Intent intent = new Intent(PaymentActivity.this, CreditCardInfoActivity.class);
+                intent.putExtra("TenantID", mTenantID);
+                intent.putExtra("UnitID", mUnitID);
+                intent.putExtra("pmtAmt", pmtAmt);
+                startActivity(intent);
             }
         });
 

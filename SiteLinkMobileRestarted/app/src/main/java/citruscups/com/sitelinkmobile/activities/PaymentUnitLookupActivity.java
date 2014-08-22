@@ -69,12 +69,15 @@ public class PaymentUnitLookupActivity extends Activity {
                 String ledgerID = selectedRow.get("LedgerID");
                 Toast.makeText(getApplicationContext(), "LedgerID " + ledgerID, Toast.LENGTH_SHORT).show();
                 */
-                Map<String, String> selectedRow = (Map<String, String>) adapterView.getItemAtPosition(i);
-                int ledgerID = Integer.parseInt(selectedRow.get("LedgerID"));
+                Map<String, Object> selectedRow = (Map<String, Object>) adapterView.getItemAtPosition(i);
+
+                String UnitID = (String) selectedRow.get("UnitID");
+                Integer LedgerID = Integer.parseInt((String) selectedRow.get("LedgerID"));
                 Intent intent = new Intent(PaymentUnitLookupActivity.this, PaymentActivity.class);
                 intent.putExtra("acctBalTable", mDataSet.getTableByName("AcctBal"));
-                intent.putExtra("LedgerID", ledgerID);
+                intent.putExtra("UnitID", UnitID);
                 intent.putExtra("TenantID", mTenantID);
+                intent.putExtra("LedgerID", LedgerID);
                 startActivity(intent);
             }
         });
@@ -167,13 +170,6 @@ public class PaymentUnitLookupActivity extends Activity {
             mDataSet = new DataSet();
             mDataSet.addTable(dataTable);
             UpdateBalances(dataTable);
-            /*
-            String columns[] = new String[]{"sUnitName", "sBalance"};
-            int fields[] = new int[]{android.R.id.text1, android.R.id.text2};
-            ListAdapter adapter = new SimpleAdapter(PaymentUnitLookupActivity.this, rows2, android.R.layout.simple_list_item_2, columns, fields);
-            ListView paymentUnitLookupListView = (ListView) findViewById(R.id.payment_unitLookup_listView);
-            paymentUnitLookupListView.setAdapter(adapter);
-            */
         }
     }
 }

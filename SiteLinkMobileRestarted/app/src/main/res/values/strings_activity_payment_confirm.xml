@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="payment_confirmation_label">Confirm Your Payment</string>
+    <string name="payment_amtToPay_label">Amount to Pay</string>
+    <string name="payment_date">Payment Date</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="payment_submit_button">Submit Payment</string>
+
+</resources>

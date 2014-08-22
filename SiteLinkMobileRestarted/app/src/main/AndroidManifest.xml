@@ -29,17 +29,18 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_tenant_lookup"
             android:parentActivityName=".activities.NavigationActivity">
-            [
         </activity>
         <activity
             android:name=".activities.NavigationActivity"
-            android:label="@string/activity_navigation">
+            android:label="@string/activity_navigation"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activities.PaymentUnitLookupActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_payment_unit_lookup"
-            android:parentActivityName=".activities.TenantLookupActivity">
+            android:parentActivityName=".activities.TenantLookupActivity"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activities.NewTenantActivity"
@@ -49,23 +50,30 @@
         <activity
             android:name=".activities.PaymentActivity"
             android:label="@string/title_activity_payment"
-            android:parentActivityName=".activities.PaymentUnitLookupActivity">
+            android:parentActivityName=".activities.PaymentUnitLookupActivity"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activities.UnitLookupActivity"
             android:label="@string/title_activity_unit_lookup"
-            android:parentActivityName=".activities.NavigationActivity">
+            android:parentActivityName=".activities.NavigationActivity"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activities.CreditCardInfoActivity"
             android:label = "@string/title_activity_creditcard_info"
-            android:parentActivityName=".activities.PaymentUnitLookupActivity">
-
+            android:parentActivityName=".activities.PaymentUnitLookupActivity"
+            android:launchMode="singleTop">
         </activity>
         <activity
             android:name=".activities.ReservationActivity"
             android:label="@string/title_activity_reservation"
             android:parentActivityName=".activities.UnitLookupActivity">
+        </activity>
+        <activity
+            android:name=".activities.PaymentConfirmActivity"
+            android:label="@string/title_activity_payment_confirm"
+            android:parentActivityName=".activities.CreditCardInfoActivity">
         </activity>
     </application>
 

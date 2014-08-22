@@ -63,4 +63,9 @@ public class NavigationActivity extends Activity{
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        //Disable the back button from this screen
+    }
 }

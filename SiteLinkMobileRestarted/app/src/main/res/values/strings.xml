@@ -18,5 +18,6 @@
     <string name="title_activity_creditcard_info">Billing Information</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_reservation">ReservationActivity</string>
+    <string name="title_activity_payment_confirm">PaymentConfirmActivity</string>
 
 </resources>
