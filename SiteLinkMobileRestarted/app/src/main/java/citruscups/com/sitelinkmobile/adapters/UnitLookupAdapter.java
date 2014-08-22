@@ -13,9 +13,11 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.interfaces.ICommand;
 
 /**
@@ -186,6 +188,23 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
 
     public void setViewText(TextView view, String value)
     {
+        if (Helper.isNumeric(value))
+        {
+            try
+            {
+                Double d = Double.parseDouble(value);
+                DecimalFormat format;
+                if (d % 1 == 0)
+                    format = new DecimalFormat("###,##0");
+                else
+                    format = new DecimalFormat("###,##0.00");
+                value = format.format(d);
+            }
+            catch (NumberFormatException nfe)
+            {
+            }
+        }
+
         view.setText(value);
         if (mCommandMap != null)
         {
