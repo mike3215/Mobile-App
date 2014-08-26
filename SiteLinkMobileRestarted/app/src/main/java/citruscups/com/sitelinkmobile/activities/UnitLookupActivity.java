@@ -2,7 +2,6 @@ package citruscups.com.sitelinkmobile.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +16,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -33,7 +33,6 @@ import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class UnitLookupActivity extends Activity implements SearchView.OnQueryTextListener
 {
-    private Fragment mFragment;
     private Constants.UsedFor mUsedFor;
     private SharedPreferences mSharedPreferences;
     private UnitLookupAdapter mAdapter;
@@ -183,8 +182,8 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
             final String[] columns = new String[]{"sUnitName", "sTypeName", "dcWidth", "dcLength", "dcStdRate", "iFloor", "bClimate", "bInside", "bPower", "bAlarm"};
             final int[] to = new int[]{R.id.unitName, R.id.typeName, R.id.width, R.id.length, R.id.standardRate, R.id.floor, R.id.climate, R.id.inside, R.id.power, R.id.alarm};
             mAdapter = new UnitLookupAdapter(UnitLookupActivity.this, mDataSet.getTables().get(0), R.layout.unit_lookup_list_item, columns, to);
-            Map<Integer, ICommand> commandMap = new Hashtable<Integer, ICommand>();
-            commandMap.put(R.id.standardRate, new ICommand()
+            Map<Integer, ICommand> colorMap = new Hashtable<Integer, ICommand>();
+            colorMap.put(R.id.standardRate, new ICommand()
             {
                 @Override
                 public int executeColor(String text)
@@ -194,8 +193,96 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                     else
                         return Color.BLACK;
                 }
+
+                @Override
+                public String executeText(String text)
+                {
+                    return text;
+                }
             });
-            mAdapter.setCommandMap(commandMap);
+            mAdapter.setColorMap(colorMap);
+            Map<Integer, ICommand> textFormatMap = new Hashtable<Integer, ICommand>();
+            textFormatMap.put(R.id.standardRate, new ICommand()
+            {
+                @Override
+                public int executeColor(String text)
+                {
+                    return 0;
+                }
+
+                @Override
+                public String executeText(String text)
+                {
+                    try
+                    {
+                        Double d = Double.parseDouble(text);
+                        DecimalFormat format;
+                        format = new DecimalFormat("###,##0.00");
+
+                        return format.format(d);
+                    }
+                    catch (NumberFormatException nfe)
+                    {
+                    }
+                    return text;
+                }
+            });
+            textFormatMap.put(R.id.width, new ICommand()
+            {
+                @Override
+                public int executeColor(String text)
+                {
+                    return 0;
+                }
+
+                @Override
+                public String executeText(String text)
+                {
+                    try
+                    {
+                        Double d = Double.parseDouble(text);
+                        DecimalFormat format;
+                        if (d % 1 == 0)
+                            format = new DecimalFormat("###,##0");
+                        else
+                            format = new DecimalFormat("###,##0.00");
+                        return format.format(d);
+                    }
+                    catch (NumberFormatException nfe)
+                    {
+                    }
+                    return text;
+                }
+            });
+            textFormatMap.put(R.id.length, new ICommand()
+            {
+                @Override
+                public int executeColor(String text)
+                {
+                    return 0;
+                }
+
+                @Override
+                public String executeText(String text)
+                {
+                    try
+                    {
+                        Double d = Double.parseDouble(text);
+                        DecimalFormat format;
+                        if (d % 1 == 0)
+                            format = new DecimalFormat("###,##0");
+                        else
+                            format = new DecimalFormat("###,##0.00");
+                        return format.format(d);
+                    }
+                    catch (NumberFormatException nfe)
+                    {
+                    }
+                    return text;
+                }
+            });
+
+            mAdapter.setTextFormatMap(textFormatMap);
             mListView.setAdapter(mAdapter);
         }
     }
