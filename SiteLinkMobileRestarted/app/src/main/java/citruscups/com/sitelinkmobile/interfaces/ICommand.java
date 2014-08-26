@@ -6,4 +6,6 @@ package citruscups.com.sitelinkmobile.interfaces;
 public interface ICommand
 {
     public int executeColor(String text);
+
+    public String executeText(String text);
 }

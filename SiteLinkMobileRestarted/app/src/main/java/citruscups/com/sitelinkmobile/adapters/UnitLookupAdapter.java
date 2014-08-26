@@ -13,11 +13,9 @@ import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import java.text.DecimalFormat;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
-import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.interfaces.ICommand;
 
 /**
@@ -28,18 +26,17 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
     private final Object lock = new Object();
     private String mColumns[] = new String[]{"sFName", "sLName", "sCompany", "sCity", "sPostalCode", "sPhone", "TenantID"};
     private int mTo[];
-    private Map<Integer, ICommand> mCommandMap;
+    private Map<Integer, ICommand> mColorMap;
+    private Map<Integer, ICommand> mTextFormatMap;
     private LayoutInflater mInflater;
     private DataTable mDataTable;
     private DataTable mDataTableOriginal;
     private Filter mFilter;
-    private Context mContext;
     private int mResource;
     private SimpleAdapter.ViewBinder mViewBinder;
 
     public UnitLookupAdapter(Context context, DataTable data, int resource, String[] columns, int[] to)
     {
-        mContext = context;
         mDataTable = data;
         mColumns = columns;
         mTo = to;
@@ -188,30 +185,21 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
 
     public void setViewText(TextView view, String value)
     {
-        if (Helper.isNumeric(value))
-        {
-            try
-            {
-                Double d = Double.parseDouble(value);
-                DecimalFormat format;
-                if (d % 1 == 0)
-                    format = new DecimalFormat("###,##0");
-                else
-                    format = new DecimalFormat("###,##0.00");
-                value = format.format(d);
-            }
-            catch (NumberFormatException nfe)
-            {
-            }
-        }
-
-        view.setText(value);
-        if (mCommandMap != null)
+        if (mTextFormatMap != null)
         {
             final int id = view.getId();
-            if (mCommandMap.containsKey(id))
+            if (mTextFormatMap.containsKey(id))
             {
-                view.setTextColor(mCommandMap.get(id).executeColor(value));
+                value = mTextFormatMap.get(id).executeText(value);
+            }
+        }
+        view.setText(value);
+        if (mColorMap != null)
+        {
+            final int id = view.getId();
+            if (mColorMap.containsKey(id))
+            {
+                view.setTextColor(mColorMap.get(id).executeColor(value));
             }
         }
     }
@@ -222,11 +210,14 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
         notifyDataSetChanged();
     }
 
-    public Map<Integer, ICommand> getCommandMap() { return mCommandMap; }
-
-    public void setCommandMap(Map<Integer, ICommand> commandMap)
+    public void setColorMap(Map<Integer, ICommand> colorMap)
     {
-        mCommandMap = commandMap;
+        mColorMap = colorMap;
+    }
+
+    public void setTextFormatMap(Map<Integer, ICommand> textFormatMap)
+    {
+        mTextFormatMap = textFormatMap;
     }
 
     private class CitrusFilter extends Filter
