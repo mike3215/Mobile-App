@@ -65,7 +65,14 @@ public class PaymentConfirmActivity extends Activity {
         });
     }
 
+    private void alertUser(Integer retCode) {
+        Toast.makeText(getApplicationContext(), "Payment Failed! Return code: " + retCode, Toast.LENGTH_LONG).show();
+    }
+
     private void goToNav() {
+        // The payment was successful!
+        Toast.makeText(getApplicationContext(), "Payment Successful!", Toast.LENGTH_LONG).show();
+
         Intent intent = new Intent(PaymentConfirmActivity.this, NavigationActivity.class);
         startActivity(intent);
     }
@@ -96,9 +103,8 @@ public class PaymentConfirmActivity extends Activity {
 
     private class MakePayment extends AsyncTask<Void, Void, Void>
     {
+        private Integer retCode;
         private DataTable dataTable;
-        private int retCode;
-
         @Override
         protected void onPreExecute()
         {
@@ -139,16 +145,12 @@ public class PaymentConfirmActivity extends Activity {
             params.put("bTestMode", testMode);
             params.put("iSource", 10);
             mDataSet = ServerStuff.callSoapMethod("PaymentSimpleWithSource", params);
-            if (mDataSet != null)
-            {
+
+            if (mDataSet != null) {
                 dataTable = mDataSet.getTableByName("RT");
                 retCode = Helper.getRtValue(dataTable);
-                if (retCode == 1 ) {
-                    // The payment was successful!
-                    Toast.makeText(getApplicationContext(), "Payment Successful!", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Payment Failed! Return code: " + retCode, Toast.LENGTH_LONG).show();
-                }
+            } else {
+                retCode = -99;
             }
 
             return null;
@@ -162,7 +164,11 @@ public class PaymentConfirmActivity extends Activity {
             if (mProgressBar.isShowing())
                 mProgressBar.dismiss();
 
-            //if (retCode == 1) goToNav();
+            if (retCode == 1) {
+                goToNav();
+            } else {
+                alertUser(retCode);
+            }
 
             finish();
 
