@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 import citruscups.com.sitelinkmobile.R;
-import citruscups.com.sitelinkmobile.adapters.TenantLookupAdapter;
+import citruscups.com.sitelinkmobile.adapters.UnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 import citruscups.com.sitelinkmobile.helper.Constants;
@@ -32,8 +32,8 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     private MenuItem mMenuItem;
     private SharedPreferences mSharedPreferences;
     private TenantLookupUsedFor mUsedFor;
-    private ListView mainListView;
-    private TenantLookupAdapter tenantLookupAdapter;
+    private ListView mListView;
+    private UnitLookupAdapter mAdapter;
 
     public DataSet getDataSet()
     {
@@ -67,11 +67,8 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
-        tenantLookupAdapter = new TenantLookupAdapter(this, getLayoutInflater());
-        mainListView = (ListView) findViewById(R.id.listView);
-
-        mainListView.setAdapter(tenantLookupAdapter);
-        mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        mListView = (ListView) findViewById(R.id.listView);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
@@ -110,7 +107,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 }
             }
         });
-        mainListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener()
         {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
@@ -125,7 +122,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 return false;
             }
         });
-        mainListView.setTextFilterEnabled(true);
+        mListView.setTextFilterEnabled(true);
 
         new GetTenants().execute();
     }
@@ -153,7 +150,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     @Override
     public boolean onQueryTextSubmit(String s)
     {
-        tenantLookupAdapter.getFilter().filter(s);
+        mAdapter.getFilter().filter(s);
 
         return true;
     }
@@ -163,8 +160,8 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     {
         if (s.equals(""))
         {
-            mainListView.clearTextFilter();
-            tenantLookupAdapter.getFilter().filter(s);
+            mListView.clearTextFilter();
+            mAdapter.getFilter().filter(s);
         }
 
         return false;
@@ -193,10 +190,22 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         }
     }
 
+    private void createAdapter()
+    {
+        if (mAdapter == null)
+        {
+            final String columns[] = new String[]{"sFName", "sLName", "sCompany", "sCity", "sPostalCode", "sPhone", "sRegion", "TenantID"};
+            final int to[] = new int[]{R.id.firstName, R.id.lastName, R.id.company, R.id.city, R.id.postalCode, R.id.phone, R.id.state, R.id.tenantId};
+
+            mAdapter = new UnitLookupAdapter(TenantLookupActivity.this, mDataSet.getTables().get(0), R.layout.tenant_lookup_list_item, columns, to);
+            mListView.setAdapter(mAdapter);
+        }
+    }
+
     public void UpdateTenants()
     {
         DataTable dataTable = mDataSet.getTableByName("Table");
-        tenantLookupAdapter.updateData(dataTable);
+        mAdapter.updateData(dataTable);
     }
 
     public enum TenantLookupUsedFor
@@ -254,6 +263,8 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             if (mProgressBar.isShowing())
                 mProgressBar.dismiss();
 
+            createAdapter();
+
             // Cannot update views from a different thread.
             UpdateTenants();
 
@@ -271,8 +282,6 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                 }
                 rows2.add(tempRow);
             }
-            String columns[] = new String[]{"sFName", "sLName", "sCompany", "sCity", "sPostalCode", "sPhone", "TenantID"};
-            int fields[] = new int[]{R.id.firstName, R.id.lastName, R.id.company, R.id.city, R.id.postalCode, R.id.phone, R.id.tenantId};
             ListAdapter adapter = new SimpleAdapter(TenantLookupActivity.this, rows2, R.layout.tenant_lookup_list_item, columns, fields);
             */
 
