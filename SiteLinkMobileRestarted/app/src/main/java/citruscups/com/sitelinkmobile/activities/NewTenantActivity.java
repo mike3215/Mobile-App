@@ -163,7 +163,6 @@ public class NewTenantActivity extends Activity
         if (firstName.length() > 0) buffer.add(firstName);
         if (middleName.length() > 0) buffer.add(middleName);
         if (lastName.length() > 0) buffer.add(lastName);
-        mNameFieldIgnoreEvents = true;
 
         return TextUtils.join(" ", buffer);
     }
@@ -239,6 +238,19 @@ public class NewTenantActivity extends Activity
         @Override
         protected Void doInBackground(Void... arg0)
         {
+            if (mNameFieldDirty)
+            {
+                EditText name = (EditText) findViewById(R.id.name);
+                EditText firstName = (EditText) findViewById(R.id.firstName);
+                EditText middleName = (EditText) findViewById(R.id.middleName);
+                EditText lastName = (EditText) findViewById(R.id.lastName);
+
+                HashMap<String, String> names = displayNameToNameParts(name.getText().toString());
+                firstName.setText(names.get("firstName"));
+                middleName.setText(names.get("middleName"));
+                lastName.setText(names.get("lastName"));
+            }
+
             String firstName = ((EditText) findViewById(R.id.firstName)).getText().toString();
             String middleName = ((EditText) findViewById(R.id.middleName)).getText().toString();
             String lastName = ((EditText) findViewById(R.id.lastName)).getText().toString();
@@ -332,6 +344,7 @@ public class NewTenantActivity extends Activity
                             {
                                 mTenantId = Integer.parseInt(row.get("TenantID").toString());
 
+                                //TODO tell the lookup activity that it needs to refresh
                                 finish();
                                 return null;
                             }
