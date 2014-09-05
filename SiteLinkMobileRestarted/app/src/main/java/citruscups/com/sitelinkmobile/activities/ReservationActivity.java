@@ -2,17 +2,25 @@ package citruscups.com.sitelinkmobile.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
@@ -23,12 +31,16 @@ public class ReservationActivity extends Activity
 {
     private int mTenantId;
     private int mUnitId;
+    private int mWaitingId;
+
     private HashMap<String, Object> mTenantMap;
     private HashMap<String, Object> mUnitMap;
 
     private SharedPreferences mSharedPreferences;
     private ProgressDialog mProgressBar;
     private DataSet mDataSet;
+
+    private Calendar mCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -46,12 +58,89 @@ public class ReservationActivity extends Activity
         Bundle extras = getIntent().getExtras();
         mTenantId = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
         mUnitId = extras.containsKey("UnitID") ? Integer.parseInt(extras.get("UnitID").toString()) : 0;
+        mWaitingId = extras.containsKey("WaitingID") ? Integer.parseInt(extras.get("WaitingID").toString()) : 0;
         mTenantMap = extras.containsKey("TenantMap") ? (HashMap<String, Object>) extras.get("TenantMap") : new HashMap<String, Object>();
         mUnitMap = extras.containsKey("UnitMap") ? (HashMap<String, Object>) extras.get("UnitMap") : new HashMap<String, Object>();
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
         fillFields();
+
+        final DatePickerDialog.OnDateSetListener neededDateSetListener = new DatePickerDialog.OnDateSetListener()
+        {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
+            {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                updateDateLabel((EditText) findViewById(R.id.neededDate));
+            }
+        };
+        final DatePickerDialog.OnDateSetListener followupDateSetListener = new DatePickerDialog.OnDateSetListener()
+        {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
+            {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                updateDateLabel((EditText) findViewById(R.id.followupDate));
+            }
+        };
+        final DatePickerDialog.OnDateSetListener expiresDateSetListener = new DatePickerDialog.OnDateSetListener()
+        {
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth)
+            {
+                mCalendar.set(Calendar.YEAR, year);
+                mCalendar.set(Calendar.MONTH, monthOfYear);
+                mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                updateDateLabel((EditText) findViewById(R.id.expiresDate));
+            }
+        };
+
+        EditText needed = (EditText) findViewById(R.id.neededDate);
+        needed.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(ReservationActivity.this, neededDateSetListener, mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.show();
+            }
+        });
+        EditText followup = (EditText) findViewById(R.id.followupDate);
+        followup.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(ReservationActivity.this, followupDateSetListener, mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.show();
+            }
+        });
+        EditText expires = (EditText) findViewById(R.id.expiresDate);
+        expires.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(ReservationActivity.this, expiresDateSetListener, mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+                datePickerDialog.show();
+            }
+        });
+    }
+
+    private void updateDateLabel(EditText text)
+    {
+        String myFormat = "MM-dd-yyyy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        text.setText(sdf.format(mCalendar.getTime()));
     }
 
 
@@ -98,9 +187,22 @@ public class ReservationActivity extends Activity
         }
         if (mUnitMap.containsKey("dcWidth") && mUnitMap.containsKey("dcLength"))
         {
-            TextView unitSize = (TextView) findViewById(R.id.unitSize);
-            unitSize.setText(mUnitMap.get("dcWidth") + "X" + mUnitMap.get("dcLength"));
+            try
+            {
+                Double w = Double.parseDouble(mUnitMap.get("dcWidth").toString());
+                Double l = Double.parseDouble(mUnitMap.get("dcLength").toString());
+                DecimalFormat format = new DecimalFormat("###,##0.00");
+
+                TextView unitSize = (TextView) findViewById(R.id.unitSize);
+                unitSize.setText(format.format(w) + "X" + format.format(l));
+            }
+            catch (NumberFormatException nfe)
+            {
+            }
         }
+
+        TextView standardRate = (TextView) findViewById(R.id.stdRate);
+        standardRate.setText(mUnitMap.get("dcStdRate").toString());
     }
 
     private class SaveReservation extends AsyncTask<Void, Void, Void>
@@ -127,11 +229,12 @@ public class ReservationActivity extends Activity
             final String userName = mSharedPreferences.getString("UserName", "DEMO");
             final String password = mSharedPreferences.getString("Password", "DEMO");
 
-            DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker);
-            String date = datePicker.getYear() + "-" + String.format("%02d", datePicker.getMonth()) + "-" + datePicker.getDayOfMonth() + "T00:00:00";
+            EditText needed = (EditText) findViewById(R.id.neededDate);
+            String date = needed.getText() + "T00:00:00";
             //TODO validation against text
             String note = ((TextView) findViewById(R.id.reservationNote)).getText().toString();
-
+            int QTRentalTypeID = ((RadioButton) findViewById(R.id.quote)).isChecked() ? 1 : 2;
+            
             LinkedHashMap<String, Object> params = new LinkedHashMap<String, Object>();
             params.put("sCorpCode", corpCode);
             params.put("sLocationCode", locationCode);
@@ -143,7 +246,18 @@ public class ReservationActivity extends Activity
             params.put("sUnitID3", "");
             params.put("dNeeded", date); //1975-01-01
             params.put("sComment", note);
-            mDataSet = ServerStuff.callSoapMethod("ReservationNew", params);
+            params.put("iSource", 5); //website
+            params.put("sSource", getString(R.string.app_name));
+            params.put("QTRentalTypeID", QTRentalTypeID);
+            params.put("iInquiryType", 0);
+            params.put("dcQuotedRate", ((EditText) findViewById(R.id.quotedRate)).getText());
+            params.put("dExpires", ((EditText) findViewById(R.id.expiresDate)).getText() + "T00:00:00");
+            params.put("dFollowUp", ((EditText) findViewById(R.id.followupDate)).getText() + "T00:00:00");
+            params.put("sTrackingCode", ((EditText) findViewById(R.id.trackingCode)).getText());
+            params.put("sCallerID", ((EditText) findViewById(R.id.callerId)).getText());
+            params.put("ConcessionID", -999);
+
+            mDataSet = ServerStuff.callSoapMethod("ReservationNewWithSource_v5", params);
             if (mDataSet != null)
             {
                 int retCode = Helper.getRtValue(mDataSet);
