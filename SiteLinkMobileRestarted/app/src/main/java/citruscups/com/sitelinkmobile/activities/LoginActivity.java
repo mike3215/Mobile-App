@@ -33,7 +33,8 @@ import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends Activity implements LoaderCallbacks<Cursor>
+{
 
     // Keep track of the login task to ensure we can cancel it if requested
     private UserLoginTask mAuthTask = null;
@@ -48,7 +49,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private View mLoginFormView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -59,10 +61,13 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
             @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent)
+            {
+                if (id == R.id.login || id == EditorInfo.IME_NULL)
+                {
                     attemptLogin();
                     return true;
                 }
@@ -71,9 +76,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         });
 
         Button mAPISignInButton = (Button) findViewById(R.id.api_sign_in_button);
-        mAPISignInButton.setOnClickListener(new View.OnClickListener() {
+        mAPISignInButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 attemptLogin();
             }
         });
@@ -84,7 +91,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
     }
 
-    private void populateAutoComplete() {
+    private void populateAutoComplete()
+    {
         getLoaderManager().initLoader(0, null, this);
     }
 
@@ -93,8 +101,10 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * If there are form errors (invalid username, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    public void attemptLogin() {
-        if (mAuthTask != null) {
+    public void attemptLogin()
+    {
+        if (mAuthTask != null)
+        {
             return;
         }
 
@@ -118,42 +128,51 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         View focusView = null;
 
         // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password))
+        {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid username.
-        if (TextUtils.isEmpty(username)) {
+        if (TextUtils.isEmpty(username))
+        {
             mUsernameView.setError(getString(R.string.error_field_required));
             focusView = mUsernameView;
             cancel = true;
-        } else if (!isUsernameValid(username)) {
+        }
+        else if (!isUsernameValid(username))
+        {
             mUsernameView.setError(getString(R.string.error_invalid_username));
             focusView = mUsernameView;
             cancel = true;
         }
 
         // Check for a valid location code.
-        if (TextUtils.isEmpty(locCode)) {
+        if (TextUtils.isEmpty(locCode))
+        {
             mLocCodeView.setError(getString(R.string.error_field_required));
             focusView = mLocCodeView;
             cancel = true;
         }
 
         // Check for a valid corp code.
-        if (TextUtils.isEmpty(corpCode)) {
+        if (TextUtils.isEmpty(corpCode))
+        {
             mCorpCodeView.setError(getString(R.string.error_field_required));
             focusView = mCorpCodeView;
             cancel = true;
         }
 
-        if (cancel) {
+        if (cancel)
+        {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
-        } else {
+        }
+        else
+        {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
@@ -167,12 +186,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
     }
 
-    private boolean isUsernameValid(String username) {
+    private boolean isUsernameValid(String username)
+    {
         //TODO: Add better username validation?
         return username.length() < 11;
     }
 
-    private boolean isPasswordValid(String password) {
+    private boolean isPasswordValid(String password)
+    {
         //TODO: Add better password validation?
         return password.length() > 3;
     }
@@ -181,31 +202,39 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
      * Shows the progress UI and hides the login form.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void showProgress(final boolean show) {
+    public void showProgress(final boolean show)
+    {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2)
+        {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
             mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+                    show ? 0 : 1).setListener(new AnimatorListenerAdapter()
+            {
                 @Override
-                public void onAnimationEnd(Animator animation) {
+                public void onAnimationEnd(Animator animation)
+                {
                     mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter()
+            {
                 @Override
-                public void onAnimationEnd(Animator animation) {
+                public void onAnimationEnd(Animator animation)
+                {
                     mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
                 }
             });
-        } else {
+        }
+        else
+        {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -214,14 +243,16 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.login, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -230,17 +261,20 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     }
 
     @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle)
+    {
         return null;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor)
+    {
 
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+    public void onLoaderReset(Loader<Cursor> cursorLoader)
+    {
 
     }
 
@@ -248,7 +282,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     /**
      * Represents an asynchronous login/registration task used to authenticate the user
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean>
+    {
         private final String mCorpCode;
         private final String mLocationCode;
         private final String mUsername;
@@ -256,7 +291,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         private String mMessage;
 
-        UserLoginTask(String corpCode, String locationCode, String username, String password) {
+        UserLoginTask(String corpCode, String locationCode, String username, String password)
+        {
             mCorpCode = corpCode;
             mLocationCode = locationCode;
             mUsername = username;
@@ -291,12 +327,14 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final Boolean success)
+        {
             mAuthTask = null;
             showProgress(false);
 
             Log.i("Ret", mMessage);
-            if(success) {
+            if (success)
+            {
                 // Create an Intent to take us over to a new TenantSelectActivity
                 Intent NavigationActivity = new Intent(LoginActivity.this, NavigationActivity.class);
 
@@ -304,9 +342,11 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
                 //tenantSelectActivity.putExtra()
 
                 startActivity(NavigationActivity);
+                finish();
 
-
-            } else {
+            }
+            else
+            {
                 //mUsernameView.setError(getString(R.string.error_incorrect_username));
                 //mPasswordView.setError((getString(R.string.error_incorrect_password)));
 
@@ -317,7 +357,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
         }
 
         @Override
-        protected void onCancelled() {
+        protected void onCancelled()
+        {
             mAuthTask = null;
             showProgress(false);
         }
