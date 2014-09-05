@@ -42,26 +42,204 @@
             />
     </TableRow>
 
-    <DatePicker
-        android:id="@+id/datePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@id/unitRow"/>
-
     <EditText
         android:id="@+id/reservationNote"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/datePicker"
         android:ems="10"
         android:gravity="top"
         android:hint="Enter Note/Comment here."
         android:inputType="textMultiLine"
-        android:lines="5"/>
+        android:lines="3"/>
+
+    <TextView
+        android:id="@+id/lblStdRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/unitRow"
+        android:layout_weight="1"
+        android:text="Standard Rate"
+        android:textSize="22dp"/>
+
+    <TextView
+        android:id="@+id/stdRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/lblStdRate"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/unitRow"
+        android:layout_toRightOf="@id/lblStdRate"
+        android:gravity="right"
+        android:textSize="22dp"/>
+
+    <EditText
+        android:id="@+id/quotedRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/lblQuotedRate"
+        android:layout_toEndOf="@+id/lblQuotedRate"
+        android:layout_toRightOf="@+id/lblQuotedRate"
+        android:ems="10"
+        android:inputType="numberDecimal"/>
+
+    <TextView
+        android:id="@+id/lblQuotedRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/tenantName"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/tenantName"
+        android:layout_below="@+id/lblStdRate"
+        android:layout_toEndOf="@+id/lblStdRate"
+        android:layout_weight="1"
+        android:text="Quoted Rate"
+        android:textSize="22dp"/>
+
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/quotedRate"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/quote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Quote"/>
+
+        <RadioButton
+            android:id="@+id/reservation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|right"
+            android:layout_weight="1"
+            android:checked="false"
+            android:text="Reservation"/>
+
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/neededDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/radioGroup"
+        android:ems="10"
+        android:focusable="false"
+        android:inputType="date"/>
+
+    <EditText
+        android:id="@+id/followupDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/neededDate"
+        android:ems="10"
+        android:focusable="false"
+        android:inputType="date"/>
+
+    <EditText
+        android:id="@+id/expiresDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/followupDate"
+        android:layout_alignRight="@+id/followupDate"
+        android:layout_below="@+id/followupDate"
+        android:ems="10"
+        android:focusable="false"
+        android:inputType="date"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/neededDate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toEndOf="@+id/lblStdRate"
+        android:layout_weight="1"
+        android:text="Needed"
+        android:textSize="22dp"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/expiresDate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toEndOf="@+id/lblStdRate"
+        android:layout_weight="1"
+        android:text="Follow up"
+        android:textSize="22dp"/>
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/expiresDate"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toEndOf="@+id/lblStdRate"
+        android:layout_weight="1"
+        android:text="Expires"
+        android:textSize="22dp"/>
+
+    <EditText
+        android:id="@+id/trackingCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView3"
+        android:ems="7"
+        />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/trackingCode"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toEndOf="@+id/lblStdRate"
+        android:layout_weight="1"
+        android:text="Tracking Code"
+        android:textSize="22dp"/>
+
+    <EditText
+        android:id="@+id/callerId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/trackingCode"
+        android:ems="7"/>
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/callerId"
+        android:layout_weight="1"
+        android:text="Caller Id"
+        android:textSize="22dp"/>
 
 
 </RelativeLayout>
