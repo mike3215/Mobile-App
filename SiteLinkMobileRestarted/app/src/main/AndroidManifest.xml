@@ -75,6 +75,11 @@
             android:label="@string/title_activity_payment_confirm"
             android:parentActivityName=".activities.CreditCardInfoActivity">
         </activity>
+        <activity
+            android:name=".activities.PaymentReceiptActivity"
+            android:label="@string/title_activity_payment_receipt"
+            android:parentActivityName=".activities.NavigationActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -69,11 +69,11 @@ public class PaymentConfirmActivity extends Activity {
         Toast.makeText(getApplicationContext(), "Payment Failed! Return code: " + retCode, Toast.LENGTH_LONG).show();
     }
 
-    private void goToNav() {
-        // The payment was successful!
-        Toast.makeText(getApplicationContext(), "Payment Successful!", Toast.LENGTH_LONG).show();
-
-        Intent intent = new Intent(PaymentConfirmActivity.this, NavigationActivity.class);
+    private void showReceipt(Integer iReceiptNum) {
+        Intent intent = new Intent(PaymentConfirmActivity.this, PaymentReceiptActivity.class);
+        intent.putExtra("pmtAmt", mPmtAmt);
+        intent.putExtra("ccNum", mCCNumber);
+        intent.putExtra("iReceiptNum", iReceiptNum);
         startActivity(intent);
     }
 
@@ -165,7 +165,10 @@ public class PaymentConfirmActivity extends Activity {
                 mProgressBar.dismiss();
 
             if (retCode == 1) {
-                goToNav();
+                DataTable dt = mDataSet.getTableByName("Receipts");
+                int iReceiptNum = Integer.parseInt((String) dt.getRow(0).get("iReceiptNum"));
+
+                showReceipt(iReceiptNum);
             } else {
                 alertUser(retCode);
             }

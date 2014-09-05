@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="payment_receipt_label">Payment Accepted</string>
+    <string name="payment_amtPaid_label">Amount Paid</string>
+    <string name="payment_receiptDate_label">Payment Date</string>
+    <string name="payment_receipt_method">Payment Method</string>
+    <string name="payment_receipt_rtnMain_btn">Return to the Main Menu</string>
+    <string name="payment_receipt_delayNotice">Your payment should be immediately reflected in the SiteLink client. Note that you may need to refresh your data. \n\nThank you for using SiteLink Mobile</string>
+
+</resources>
