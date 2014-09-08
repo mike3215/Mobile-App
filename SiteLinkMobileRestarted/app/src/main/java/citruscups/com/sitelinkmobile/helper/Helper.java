@@ -73,5 +73,32 @@ public class Helper
 
         return false;
     }
-}
 
+    public static String formatDate(int day, int month, int year)
+    {
+        return month + "-" + day + "-" + year + "T00:00:00";
+    }
+
+    public static String formatDate(String date, String format)
+    {
+        if (date.equals("")) return date;
+
+        int length = format.length();
+
+        int yearStart = format.indexOf("y");
+        int yearEnd = format.lastIndexOf("y", length) + 1;
+
+        int monthStart = format.indexOf("M");
+        int monthEnd = format.lastIndexOf("M", length) + 1;
+
+        int dayStart = format.indexOf("d");
+        int dayEnd = format.lastIndexOf("d", length) + 1;
+
+        String year = date.substring(yearStart, yearEnd);
+        String month = date.substring(monthStart, monthEnd);
+        String day = date.substring(dayStart, dayEnd);
+
+        return year + "-" + day + "-" + month + "T00:00:00";
+    }
+
+}
