@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Button;
 
 import citruscups.com.sitelinkmobile.R;
-import citruscups.com.sitelinkmobile.activities.TenantLookupActivity.TenantLookupUsedFor;
+import citruscups.com.sitelinkmobile.helper.Constants;
 
 /**
  * Created by Michael on 8/9/2014.
@@ -34,7 +34,7 @@ public class NavigationActivity extends Activity{
             {
                 // Create an Intent to take us over to a new TenantSelectActivity
                 Intent TenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
-                TenantLookupActivity.putExtra("UsedFor", TenantLookupUsedFor.TenantLookup);
+                TenantLookupActivity.putExtra("UsedFor", Constants.UsedFor.TenantLookup);
                 startActivity(TenantLookupActivity);
             }
         });
@@ -46,7 +46,7 @@ public class NavigationActivity extends Activity{
             {
                 // Create an Intent to take us over to a new TenantSelectActivity
                 Intent TenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
-                TenantLookupActivity.putExtra("UsedFor", TenantLookupUsedFor.Payment);
+                TenantLookupActivity.putExtra("UsedFor", Constants.UsedFor.Payment);
                 startActivity(TenantLookupActivity);
             }
         });
@@ -57,9 +57,21 @@ public class NavigationActivity extends Activity{
             public void onClick(View view)
             {
                 // Create an Intent to take us over to a new TenantSelectActivity
-                Intent TenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
-                TenantLookupActivity.putExtra("UsedFor", TenantLookupUsedFor.InqRes);
-                startActivity(TenantLookupActivity);
+                Intent ReservationLookupActivity = new Intent(NavigationActivity.this, ReservationLookupActivity.class);
+                ReservationLookupActivity.putExtra("UsedFor", Constants.UsedFor.InqRes);
+                startActivity(ReservationLookupActivity);
+            }
+        });
+
+        buttonMoveIn.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                // Create an Intent to take us over to a new TenantSelectActivity
+                Intent unitLookupActivity = new Intent(NavigationActivity.this, UnitLookupActivity.class);
+                unitLookupActivity.putExtra("UsedFor", Constants.UsedFor.MoveIn);
+                startActivity(unitLookupActivity);
             }
         });
     }
