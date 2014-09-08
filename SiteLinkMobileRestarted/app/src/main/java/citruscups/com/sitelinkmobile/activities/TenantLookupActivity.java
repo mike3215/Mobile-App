@@ -23,6 +23,7 @@ import citruscups.com.sitelinkmobile.adapters.UnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 import citruscups.com.sitelinkmobile.helper.Constants;
+import citruscups.com.sitelinkmobile.helper.Helper;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class TenantLookupActivity extends Activity implements SearchView.OnQueryTextListener
@@ -31,9 +32,12 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     private ProgressDialog mProgressBar;
     private MenuItem mMenuItem;
     private SharedPreferences mSharedPreferences;
-    private TenantLookupUsedFor mUsedFor;
+    private Constants.UsedFor mUsedFor;
     private ListView mListView;
     private UnitLookupAdapter mAdapter;
+
+    private int mUnitId;
+    private HashMap<String, Object> mUnitMap;
 
     public DataSet getDataSet()
     {
@@ -59,11 +63,14 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
+        Bundle extras = getIntent().getExtras();
         if (this.getIntent().hasExtra("UsedFor")) {
-            mUsedFor = (TenantLookupUsedFor) this.getIntent().getExtras().get("UsedFor");
+            mUsedFor = (Constants.UsedFor) this.getIntent().getExtras().get("UsedFor");
         } else {
-            mUsedFor = TenantLookupUsedFor.TenantLookup;
+            mUsedFor = Constants.UsedFor.TenantLookup;
         }
+        mUnitId = extras.containsKey("UnitID") ? Integer.parseInt(extras.get("UnitID").toString()) : 0;
+        mUnitMap = extras.containsKey("UnitMap") ? (HashMap<String, Object>) extras.get("UnitMap") : new HashMap<String, Object>();
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
@@ -102,7 +109,13 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                         break;
 
                     case MoveIn:
-
+                        intent = new Intent(TenantLookupActivity.this, MoveInActivity.class);
+                        intent.putExtra("TenantID", tenantId);
+                        intent.putExtra("UnitID", mUnitId);
+                        intent.putExtra("TenantMap", selectedRow);
+                        intent.putExtra("UnitMap", mUnitMap);
+                        intent.putExtra("UsedFor", Constants.UsedFor.MoveIn);
+                        startActivity(intent);
                         break;
                 }
             }
@@ -123,8 +136,6 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             }
         });
         mListView.setTextFilterEnabled(true);
-
-        new GetTenants().execute();
     }
 
     @Override
@@ -150,7 +161,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
     @Override
     public boolean onQueryTextSubmit(String s)
     {
-        mAdapter.getFilter().filter(s);
+        new GetTenants().execute(s);
 
         return true;
     }
@@ -161,7 +172,6 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         if (s.equals(""))
         {
             mListView.clearTextFilter();
-            mAdapter.getFilter().filter(s);
         }
 
         return false;
@@ -208,15 +218,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         mAdapter.updateData(dataTable);
     }
 
-    public enum TenantLookupUsedFor
-    {
-        Payment,
-        TenantLookup,
-        InqRes,
-        MoveIn
-    }
-
-    private class GetTenants extends AsyncTask<Void, Void, Void>
+    private class GetTenants extends AsyncTask<String, Void, Void>
     {
         private DataTable dataTable;
 
@@ -232,7 +234,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         }
 
         @Override
-        protected Void doInBackground(Void... arg0)
+        protected Void doInBackground(String... arg0)
         {
             //TODO remove DEMO creds before release
             final String corpCode = mSharedPreferences.getString("CorpCode", "DEMO");
@@ -245,7 +247,24 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
             params.put("sLocationCode", locationCode);
             params.put("sCorpUserName", userName);
             params.put("sCorpPassword", password);
-            mDataSet = ServerStuff.callSoapMethod("TenantListDetailed", params);
+
+            String search = arg0[0];
+            String num = Helper.isNumeric(search) ? search : "";
+
+            params.put("sTenantFirstName", search);
+            params.put("sTenantLastName", search);
+            params.put("sAddressLine1", search);
+            params.put("sAddressLine2", search);
+            params.put("sCity", search);
+            params.put("sState", search);
+            params.put("sZipCode", search);
+            params.put("sEmailAddress", search);
+            params.put("sPhoneNumber", num);
+            params.put("sPhoneNumber2", num);
+            params.put("sPhoneNumber3", num);
+            params.put("sPhoneNumber4", num);
+
+            mDataSet = ServerStuff.callSoapMethod("TenantSearchDetailed", params);
             if (mDataSet != null)
             {
                 dataTable = mDataSet.getTableByName("Table");

@@ -88,7 +88,11 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                         break;
 
                     case MoveIn:
-
+                        intent = new Intent(UnitLookupActivity.this, TenantLookupActivity.class);
+                        intent.putExtra("UnitID", unitId);
+                        intent.putExtra("UnitMap", selectedRow);
+                        intent.putExtra("UsedFor", mUsedFor);
+                        startActivity(intent);
                         break;
                 }
             }
