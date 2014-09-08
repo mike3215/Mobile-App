@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -137,7 +138,7 @@ public class ReservationActivity extends Activity
 
     private void updateDateLabel(EditText text)
     {
-        String myFormat = "MM-dd-yyyy"; //In which you need put here
+        String myFormat = "MM/dd/yyyy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         text.setText(sdf.format(mCalendar.getTime()));
@@ -230,7 +231,14 @@ public class ReservationActivity extends Activity
             final String password = mSharedPreferences.getString("Password", "DEMO");
 
             EditText needed = (EditText) findViewById(R.id.neededDate);
-            String date = needed.getText() + "T00:00:00";
+            EditText followup = (EditText) findViewById(R.id.followupDate);
+            EditText expires = (EditText) findViewById(R.id.expiresDate);
+            Editable f = followup.getText();
+            Editable e = expires.getText();
+            String date = Helper.formatDate(needed.getText().toString(), "MM/dd/yyyy");
+            String followupDate = Helper.formatDate(f == null ? "" : f.toString(), "MM/dd/yyyy");
+            String expiresDate = Helper.formatDate(e == null ? "" : e.toString(), "MM/dd/yyyy");
+
             //TODO validation against text
             String note = ((TextView) findViewById(R.id.reservationNote)).getText().toString();
             int QTRentalTypeID = ((RadioButton) findViewById(R.id.quote)).isChecked() ? 1 : 2;
@@ -244,15 +252,15 @@ public class ReservationActivity extends Activity
             params.put("sUnitID1", mUnitId);
             params.put("sUnitID2", "");
             params.put("sUnitID3", "");
-            params.put("dNeeded", date); //1975-01-01
+            params.put("dNeeded", date);
             params.put("sComment", note);
             params.put("iSource", 5); //website
             params.put("sSource", getString(R.string.app_name));
             params.put("QTRentalTypeID", QTRentalTypeID);
             params.put("iInquiryType", 0);
             params.put("dcQuotedRate", ((EditText) findViewById(R.id.quotedRate)).getText());
-            params.put("dExpires", ((EditText) findViewById(R.id.expiresDate)).getText() + "T00:00:00");
-            params.put("dFollowUp", ((EditText) findViewById(R.id.followupDate)).getText() + "T00:00:00");
+            params.put("dExpires", expiresDate);
+            params.put("dFollowUp", followupDate);
             params.put("sTrackingCode", ((EditText) findViewById(R.id.trackingCode)).getText());
             params.put("sCallerID", ((EditText) findViewById(R.id.callerId)).getText());
             params.put("ConcessionID", -999);
