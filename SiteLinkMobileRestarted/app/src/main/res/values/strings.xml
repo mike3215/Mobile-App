@@ -20,5 +20,8 @@
     <string name="title_activity_reservation">ReservationActivity</string>
     <string name="title_activity_payment_confirm">PaymentConfirmActivity</string>
     <string name="title_activity_payment_receipt">PaymentReceiptActivity</string>
+    <string name="title_activity_reservation_lookup">ReservationLookupActivity</string>
+    <string name="title_activity_move_in">MoveInActivity</string>
+    <string name="title_activity_discount_lookup">DiscountLookupActivity</string>
 
 </resources>
