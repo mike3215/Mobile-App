@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:shrinkColumns="*">
+
+    <!-- Name Label -->
+
+    <TextView
+        android:id="@+id/lastName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_column="0"
+        android:layout_gravity="center|left"
+        android:gravity="left"
+        android:paddingBottom="2dip"
+        android:paddingRight="5dip"
+        android:text="lastName"
+        android:textColor="#43bd00"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/firstName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/lastName"
+        android:layout_gravity="center|left"
+        android:layout_toRightOf="@id/lastName"
+        android:gravity="left"
+        android:paddingBottom="2dip"
+        android:paddingRight="5dip"
+        android:text="firstname"
+        android:textColor="#acacac"/>
+
+    <TextView
+        android:id="@+id/unitName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lastName"
+        android:layout_gravity="center|left"
+        android:paddingBottom="2dip"
+        android:text="UnitName"
+        android:textColor="#acacac"/>
+
+    <TextView
+        android:id="@+id/neededDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/unitName"
+        android:layout_gravity="center"
+        android:layout_toRightOf="@id/unitName"
+        android:paddingBottom="2dip"
+        android:paddingLeft="5sp"
+        android:text="01/01/2015"
+        android:textColor="#acacac"/>
+
+
+    <TextView
+        android:id="@+id/tenantId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+</RelativeLayout>
