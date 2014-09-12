@@ -12,6 +12,20 @@ import java.util.Map;
  */
 public class DataTable implements Parcelable
 {
+    public static final Creator CREATOR = new Creator()
+    {
+        @Override
+        public DataTable createFromParcel(Parcel parcel)
+        {
+            return new DataTable(parcel);
+        }
+
+        @Override
+        public DataTable[] newArray(int size)
+        {
+            return new DataTable[size];
+        }
+    };
     private ArrayList<Map<String, Object>> _rows;
     private String _name;
     private boolean _closed;
@@ -20,6 +34,12 @@ public class DataTable implements Parcelable
     {
         _rows = new ArrayList<Map<String, Object>>();
         _name = "Table";
+    }
+
+    public DataTable(Parcel in)
+    {
+        _rows = new ArrayList<Map<String, Object>>();
+        readFromParcel(in);
     }
 
     public boolean getClosed()
@@ -31,7 +51,6 @@ public class DataTable implements Parcelable
     {
         _closed = val;
     }
-
 
     public String getName()
     {
@@ -53,9 +72,26 @@ public class DataTable implements Parcelable
         _rows.add(row);
     }
 
-    public Map<String, Object> getRow(int i) {return _rows.get(i);}
+    public void removeRow(int index)
+    {
+        if (index > 0 && index < _rows.size())
+            _rows.remove(index);
+    }
 
-    public Integer getCount() { return _rows.size();}
+    public void removeRow(Object row)
+    {
+        _rows.remove(row);
+    }
+
+    public Map<String, Object> getRow(int i)
+    {
+        return _rows.get(i);
+    }
+
+    public Integer getCount()
+    {
+        return _rows.size();
+    }
 
     @Override
     public String toString()
@@ -71,39 +107,25 @@ public class DataTable implements Parcelable
         return result + " }";
     }
 
-    public DataTable(Parcel in) {
-        _rows = new ArrayList<Map<String, Object>>();
-        readFromParcel(in);
-    }
-
     @Override
-    public int describeContents() {
+    public int describeContents()
+    {
         return 0;
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(Parcel dest, int flags)
+    {
         Bundle b = new Bundle();
         b.putString("_name", _name);
         b.putSerializable("_rows", _rows);
         dest.writeBundle(b);
     }
 
-    public void readFromParcel(Parcel in) {
+    public void readFromParcel(Parcel in)
+    {
         Bundle b = in.readBundle();
         _name = b.getString("_name");
         _rows = (ArrayList<Map<String, Object>>) b.getSerializable("_rows");
     }
-
-    public static final Creator CREATOR = new Creator() {
-        @Override
-        public DataTable createFromParcel(Parcel parcel) {
-            return new DataTable(parcel);
-        }
-
-        @Override
-        public DataTable[] newArray(int size) {
-            return new DataTable[size];
-        }
-    };
 }
