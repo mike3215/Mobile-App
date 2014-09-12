@@ -57,15 +57,19 @@ public class ReservationActivity extends Activity
         }
 
         Bundle extras = getIntent().getExtras();
-        mTenantId = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
-        mUnitId = extras.containsKey("UnitID") ? Integer.parseInt(extras.get("UnitID").toString()) : 0;
-        mWaitingId = extras.containsKey("WaitingID") ? Integer.parseInt(extras.get("WaitingID").toString()) : 0;
-        mTenantMap = extras.containsKey("TenantMap") ? (HashMap<String, Object>) extras.get("TenantMap") : new HashMap<String, Object>();
-        mUnitMap = extras.containsKey("UnitMap") ? (HashMap<String, Object>) extras.get("UnitMap") : new HashMap<String, Object>();
+        if (extras != null)
+        {
+            mTenantId = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
+            mUnitId = extras.containsKey("UnitID") ? Integer.parseInt(extras.get("UnitID").toString()) : 0;
+            mWaitingId = extras.containsKey("WaitingID") ? Integer.parseInt(extras.get("WaitingID").toString()) : 0;
+            mTenantMap = extras.containsKey("TenantMap") ? (HashMap<String, Object>) extras.get("TenantMap") : new HashMap<String, Object>();
+            mUnitMap = extras.containsKey("UnitMap") ? (HashMap<String, Object>) extras.get("UnitMap") : new HashMap<String, Object>();
+
+            fillFields();
+        }
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
 
-        fillFields();
 
         final DatePickerDialog.OnDateSetListener neededDateSetListener = new DatePickerDialog.OnDateSetListener()
         {
@@ -175,7 +179,6 @@ public class ReservationActivity extends Activity
 
     private void fillFields()
     {
-
         if (mTenantMap.containsKey("sFName") && mTenantMap.containsKey("sLName"))
         {
             TextView tenantName = (TextView) findViewById(R.id.tenantName);
@@ -249,9 +252,7 @@ public class ReservationActivity extends Activity
             params.put("sCorpUserName", userName);
             params.put("sCorpPassword", password);
             params.put("sTenantID", mTenantId);
-            params.put("sUnitID1", mUnitId);
-            params.put("sUnitID2", "");
-            params.put("sUnitID3", "");
+            params.put("sUnitID", mUnitId);
             params.put("dNeeded", date);
             params.put("sComment", note);
             params.put("iSource", 5); //website

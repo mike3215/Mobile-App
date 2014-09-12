@@ -13,18 +13,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.adapters.UnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
+import citruscups.com.sitelinkmobile.helper.Constants;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
-public class ReservationLookupActivity extends Activity implements SearchView.OnQueryTextListener
+public class ReservationLookupActivity extends Activity
 {
     private SharedPreferences mSharedPreferences;
     private ListView mListView;
@@ -33,6 +34,9 @@ public class ReservationLookupActivity extends Activity implements SearchView.On
 
     private UnitLookupAdapter mAdapter;
     private DataSet mDataSet;
+
+    private int mTenantID;
+    private HashMap<String, Object> mTenantMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -45,11 +49,18 @@ public class ReservationLookupActivity extends Activity implements SearchView.On
         if (actionBar != null)
         {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
+            // actionBar.setDisplayShowTitleEnabled(false);
         }
 
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
+        {
+            mTenantID = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
+            mTenantMap = extras.containsKey("TenantMap") ? (HashMap<String, Object>) extras.get("TenantMap") : new HashMap<String, Object>();
+        }
 
         mListView = (ListView) findViewById(R.id.listView);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -80,34 +91,7 @@ public class ReservationLookupActivity extends Activity implements SearchView.On
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.reservation_lookup, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        if (searchView != null)
-        {
-            searchView.setIconifiedByDefault(false);
-            searchView.setOnQueryTextListener(this);
-            searchView.setSubmitButtonEnabled(true);
-            searchView.setQueryHint("Search Here");
-        }
-
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String s)
-    {
-
-        return true;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s)
-    {
-        if (s.equals(""))
-        {
-            mListView.clearTextFilter();
-        }
-
-        return false;
     }
 
     @Override
@@ -116,8 +100,11 @@ public class ReservationLookupActivity extends Activity implements SearchView.On
         switch (item.getItemId())
         {
             case R.id.action_add_reservation:
-                Intent reservationActivity = new Intent(this, ReservationActivity.class);
-                startActivity(reservationActivity);
+                Intent unitLookupActivity = new Intent(this, UnitLookupActivity.class);
+                unitLookupActivity.putExtra("TenantID", mTenantID);
+                unitLookupActivity.putExtra("TenantMap", mTenantMap);
+                unitLookupActivity.putExtra("UsedFor", Constants.UsedFor.InqRes);
+                startActivity(unitLookupActivity);
                 return true;
             case R.id.action_search:
                 return true;
@@ -180,12 +167,22 @@ public class ReservationLookupActivity extends Activity implements SearchView.On
             params.put("sLocationCode", locationCode);
             params.put("sCorpUserName", userName);
             params.put("sCorpPassword", password);
-            params.put("iGlobalWaitingNum", -999);
+            params.put("TenantID", mTenantID);
 
-            mDataSet = ServerStuff.callSoapMethod("ReservationList", params);
+            mDataSet = ServerStuff.callSoapMethod("ReservationListByTenantID", params);
             if (mDataSet != null)
             {
                 dataTable = mDataSet.getTableByName("Table");
+                if (dataTable == null) return null;
+
+                for (Map<String, Object> row : dataTable.getRows())
+                {
+                    if (!row.get("dConverted_ToMoveIn").equals(""))
+                    {
+                        dataTable.removeRow(row);
+                    }
+                }
+
             }
 
             return null;

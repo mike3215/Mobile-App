@@ -57,9 +57,9 @@ public class NavigationActivity extends Activity{
             public void onClick(View view)
             {
                 // Create an Intent to take us over to a new TenantSelectActivity
-                Intent ReservationLookupActivity = new Intent(NavigationActivity.this, ReservationLookupActivity.class);
-                ReservationLookupActivity.putExtra("UsedFor", Constants.UsedFor.InqRes);
-                startActivity(ReservationLookupActivity);
+                Intent tenantLookupActivity = new Intent(NavigationActivity.this, TenantLookupActivity.class);
+                tenantLookupActivity.putExtra("UsedFor", Constants.UsedFor.InqRes);
+                startActivity(tenantLookupActivity);
             }
         });
 

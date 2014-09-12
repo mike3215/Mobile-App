@@ -60,7 +60,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
         if (actionBar != null)
         {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
+            //actionBar.setDisplayShowTitleEnabled(false);
         }
 
         Bundle extras = getIntent().getExtras();
@@ -101,7 +101,7 @@ public class TenantLookupActivity extends Activity implements SearchView.OnQuery
                         break;
 
                     case InqRes:
-                        intent = new Intent(TenantLookupActivity.this, UnitLookupActivity.class);
+                        intent = new Intent(TenantLookupActivity.this, ReservationLookupActivity.class);
                         intent.putExtra("TenantID", tenantId);
                         intent.putExtra("TenantMap", selectedRow);
                         intent.putExtra("UsedFor", Constants.UsedFor.InqRes);

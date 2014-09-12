@@ -53,7 +53,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
         if (actionBar != null)
         {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
+            //actionBar.setDisplayShowTitleEnabled(false);
         }
 
         final Bundle extras = getIntent().getExtras();

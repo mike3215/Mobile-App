@@ -46,7 +46,7 @@ public class NewTenantActivity extends Activity
         if (actionBar != null)
         {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
+            //actionBar.setDisplayShowTitleEnabled(false);
         }
 
         mSharedPreferences = getSharedPreferences("citruscups.com.sitelinkmobile", MODE_PRIVATE);
