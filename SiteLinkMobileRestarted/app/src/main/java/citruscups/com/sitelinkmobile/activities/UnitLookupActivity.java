@@ -199,7 +199,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                 }
 
                 @Override
-                public String executeText(String text)
+                public String executeText(String text, Object data)
                 {
                     return text;
                 }
@@ -215,7 +215,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                 }
 
                 @Override
-                public String executeText(String text)
+                public String executeText(String text, Object data)
                 {
                     try
                     {
@@ -240,7 +240,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                 }
 
                 @Override
-                public String executeText(String text)
+                public String executeText(String text, Object data)
                 {
                     try
                     {
@@ -267,7 +267,7 @@ public class UnitLookupActivity extends Activity implements SearchView.OnQueryTe
                 }
 
                 @Override
-                public String executeText(String text)
+                public String executeText(String text, Object data)
                 {
                     try
                     {

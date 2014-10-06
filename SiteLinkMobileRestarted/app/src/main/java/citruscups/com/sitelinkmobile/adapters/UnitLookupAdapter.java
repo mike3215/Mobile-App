@@ -127,7 +127,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
             boolean bound = false;
             if (binder != null)
             {
-                bound = binder.setViewValue(v, data, text);
+                bound = binder.setViewValue(v, row, text);
             }
 
             if (bound)
@@ -145,7 +145,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
                 }
                 else if (v instanceof TextView)
                 {
-                    setViewText((TextView) v, text);
+                    setViewText((TextView) v, row, text);
                 }
                 else if (v instanceof ImageView)
                 {
@@ -183,14 +183,14 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
         }
     }
 
-    public void setViewText(TextView view, String value)
+    public void setViewText(TextView view, Object data, String value)
     {
         if (mTextFormatMap != null)
         {
             final int id = view.getId();
             if (mTextFormatMap.containsKey(id))
             {
-                value = mTextFormatMap.get(id).executeText(value);
+                value = mTextFormatMap.get(id).executeText(value, data);
             }
         }
         view.setText(value);
@@ -305,7 +305,7 @@ public class UnitLookupAdapter extends BaseAdapter implements Filterable
             }
             else if (view instanceof TextView)
             {
-                setViewText((TextView) view, textRepresentation);
+                setViewText((TextView) view, data, textRepresentation);
             }
 
             return true;
