@@ -3,18 +3,15 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp"
+                android:padding="5dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:shrinkColumns="*">
-
-    <!-- Name Label -->
 
     <TextView
         android:id="@+id/lastName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_column="0"
         android:layout_gravity="center|left"
         android:gravity="left"
         android:paddingBottom="2dip"
@@ -41,19 +38,56 @@
         android:id="@+id/unitName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lastName"
+        android:layout_alignBottom="@id/firstName"
+        android:layout_alignParentRight="true"
         android:layout_gravity="center|left"
         android:paddingBottom="2dip"
         android:text="UnitName"
         android:textColor="#acacac"/>
 
     <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/lastName"
+        android:layout_gravity="left"
+        android:paddingBottom="2dip"
+        android:paddingLeft="5sp"
+        android:text="Needed:"
+        android:textColor="#acacac"/>
+
+    <TextView
         android:id="@+id/neededDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/unitName"
+        android:layout_below="@+id/lastName"
         android:layout_gravity="center"
-        android:layout_toRightOf="@id/unitName"
+        android:layout_toRightOf="@id/textView"
+        android:paddingBottom="2dip"
+        android:paddingLeft="5sp"
+        android:text="01/01/2015"
+        android:textColor="#acacac"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@+id/unitName"
+        android:layout_gravity="center"
+        android:layout_toLeftOf="@+id/followupDate"
+        android:layout_toStartOf="@+id/followupDate"
+        android:paddingBottom="2dip"
+        android:paddingLeft="5sp"
+        android:text="Followup:"
+        android:textColor="#acacac"/>
+
+    <TextView
+        android:id="@+id/followupDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/neededDate"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
         android:paddingBottom="2dip"
         android:paddingLeft="5sp"
         android:text="01/01/2015"
