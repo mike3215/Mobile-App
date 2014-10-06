@@ -2,8 +2,8 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="citruscups.com.sitelinkmobile.activities.DiscountLookupActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+        android:id="@+id/action_refresh"
+        android:icon="@android:drawable/stat_notify_sync"
+        android:showAsAction="ifRoom"
+        android:title="@string/action_refresh"/>
 </menu>
