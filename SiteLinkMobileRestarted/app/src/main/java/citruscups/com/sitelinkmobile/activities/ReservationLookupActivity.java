@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import citruscups.com.sitelinkmobile.adapters.UnitLookupAdapter;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
 import citruscups.com.sitelinkmobile.dataStructures.DataTable;
 import citruscups.com.sitelinkmobile.helper.Constants;
+import citruscups.com.sitelinkmobile.interfaces.ICommand;
 import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class ReservationLookupActivity extends Activity
@@ -37,6 +39,7 @@ public class ReservationLookupActivity extends Activity
 
     private int mTenantID;
     private HashMap<String, Object> mTenantMap;
+    private HashMap<String, Object> mUnitMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -60,6 +63,7 @@ public class ReservationLookupActivity extends Activity
         {
             mTenantID = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
             mTenantMap = extras.containsKey("TenantMap") ? (HashMap<String, Object>) extras.get("TenantMap") : new HashMap<String, Object>();
+            mUnitMap = extras.containsKey("UnitMap") ? (HashMap<String, Object>) extras.get("UnitMap") : new HashMap<String, Object>();
         }
 
         mListView = (ListView) findViewById(R.id.listView);
@@ -75,6 +79,11 @@ public class ReservationLookupActivity extends Activity
                 intent = new Intent(ReservationLookupActivity.this, ReservationActivity.class);
                 intent.putExtra("WaitingID", waitingId);
                 intent.putExtra("WaitingMap", selectedRow);
+                intent.putExtra("UnitMap", mUnitMap);
+                intent.putExtra("TenantID", mTenantID);
+                intent.putExtra("TenantMap", mTenantMap);
+                intent.putExtra("UnitMap", mUnitMap);
+
                 startActivity(intent);
             }
         });
@@ -124,10 +133,46 @@ public class ReservationLookupActivity extends Activity
     {
         if (mAdapter == null)
         {
-            final String columns[] = new String[]{"sFName", "sLName", "sUnitName", "dNeeded", "TenantID"};
-            final int to[] = new int[]{R.id.firstName, R.id.lastName, R.id.unitName, R.id.neededDate, R.id.tenantId};
+            final String columns[] = new String[]{"sFName", "sLName", "sUnitName1", "dNeeded", "dFollowup", "TenantID"};
+            final int to[] = new int[]{R.id.firstName, R.id.lastName, R.id.unitName, R.id.neededDate, R.id.followupDate, R.id.tenantId};
 
             mAdapter = new UnitLookupAdapter(ReservationLookupActivity.this, mDataSet.getTables().get(0), R.layout.reservation_lookup_list_item, columns, to);
+            Map<Integer, ICommand> dateFormat = new Hashtable<Integer, ICommand>();
+            dateFormat.put(R.id.neededDate, new ICommand()
+            {
+                @Override
+                public int executeColor(String text)
+                {
+                    return 0;
+                }
+
+                @Override
+                public String executeText(String text, Object data)
+                {
+                    text = text.substring(0, text.indexOf("T"));
+
+                    return text;
+                }
+            });
+            dateFormat.put(R.id.followupDate, new ICommand()
+            {
+                @Override
+                public int executeColor(String text)
+                {
+                    return 0;
+                }
+
+                @Override
+                public String executeText(String text, Object data)
+                {
+                    final int index = text.indexOf("T");
+                    if (index > -1)
+                        text = text.substring(0, index);
+
+                    return text;
+                }
+            });
+            mAdapter.setTextFormatMap(dateFormat);
             mListView.setAdapter(mAdapter);
         }
     }
@@ -177,7 +222,7 @@ public class ReservationLookupActivity extends Activity
 
                 for (Map<String, Object> row : dataTable.getRows())
                 {
-                    if (!row.get("dConverted_ToMoveIn").equals(""))
+                    if (row.get("dConverted_ToMoveIn") != null)
                     {
                         dataTable.removeRow(row);
                     }

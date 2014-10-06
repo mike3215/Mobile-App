@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -22,6 +24,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import citruscups.com.sitelinkmobile.R;
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
@@ -30,17 +33,17 @@ import citruscups.com.sitelinkmobile.server.ServerStuff;
 
 public class ReservationActivity extends Activity
 {
+    private final static int CALLBACK_RESULT = 1;
     private int mTenantId;
     private int mUnitId;
     private int mWaitingId;
-
+    private int mConcessionId = -999;
     private HashMap<String, Object> mTenantMap;
     private HashMap<String, Object> mUnitMap;
-
+    private HashMap<String, Object> mWaitingMap;
     private SharedPreferences mSharedPreferences;
     private ProgressDialog mProgressBar;
     private DataSet mDataSet;
-
     private Calendar mCalendar = Calendar.getInstance();
 
     @Override
@@ -62,8 +65,9 @@ public class ReservationActivity extends Activity
             mTenantId = extras.containsKey("TenantID") ? Integer.parseInt(extras.get("TenantID").toString()) : 0;
             mUnitId = extras.containsKey("UnitID") ? Integer.parseInt(extras.get("UnitID").toString()) : 0;
             mWaitingId = extras.containsKey("WaitingID") ? Integer.parseInt(extras.get("WaitingID").toString()) : 0;
-            mTenantMap = extras.containsKey("TenantMap") ? (HashMap<String, Object>) extras.get("TenantMap") : new HashMap<String, Object>();
-            mUnitMap = extras.containsKey("UnitMap") ? (HashMap<String, Object>) extras.get("UnitMap") : new HashMap<String, Object>();
+            mTenantMap = extras.containsKey("TenantMap") ? (HashMap<String, Object>) extras.get("TenantMap") : null;
+            mUnitMap = extras.containsKey("UnitMap") ? (HashMap<String, Object>) extras.get("UnitMap") : null;
+            mWaitingMap = extras.containsKey("WaitingMap") ? (HashMap<String, Object>) extras.get("WaitingMap") : null;
 
             fillFields();
         }
@@ -138,6 +142,37 @@ public class ReservationActivity extends Activity
                 datePickerDialog.show();
             }
         });
+
+        Button addDiscount = (Button) findViewById(R.id.addDiscount);
+        addDiscount.setOnClickListener(new View.OnClickListener()
+                                       {
+                                           @Override
+                                           public void onClick(View v)
+                                           {
+                                               Intent intent = new Intent(ReservationActivity.this, DiscountLookupActivity.class);
+                                               intent.putExtra("UnitID", mUnitId);
+                                               intent.putExtra("UnitMap", mUnitMap);
+
+                                               startActivityForResult(intent, CALLBACK_RESULT);
+                                           }
+                                       }
+        );
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == CALLBACK_RESULT)
+        {
+            if (resultCode == RESULT_OK)
+            {
+                mConcessionId = Integer.valueOf(data.getExtras().get("ConcessionID").toString());
+                Map<String, Object> discountMap = (Map<String, Object>) data.getExtras().get("DiscountMap");
+                String discountPlan = discountMap.get("sPlanName").toString();
+                TextView discount = (TextView) findViewById(R.id.discount);
+                discount.setText(discountPlan);
+            }
+        }
     }
 
     private void updateDateLabel(EditText text)
@@ -179,34 +214,58 @@ public class ReservationActivity extends Activity
 
     private void fillFields()
     {
-        if (mTenantMap.containsKey("sFName") && mTenantMap.containsKey("sLName"))
+        if (mTenantMap != null)
         {
             TextView tenantName = (TextView) findViewById(R.id.tenantName);
             tenantName.setText(mTenantMap.get("sFName") + " " + mTenantMap.get("sLName"));
         }
-        if (mUnitMap.containsKey("sUnitName"))
+        if (mUnitMap != null && mUnitMap.size() > 0) //empty if edit
         {
             TextView unitName = (TextView) findViewById(R.id.unitName);
             unitName.setText(mUnitMap.get("sUnitName").toString());
-        }
-        if (mUnitMap.containsKey("dcWidth") && mUnitMap.containsKey("dcLength"))
-        {
+
             try
             {
-                Double w = Double.parseDouble(mUnitMap.get("dcWidth").toString());
-                Double l = Double.parseDouble(mUnitMap.get("dcLength").toString());
+                final Double w = Double.parseDouble(mUnitMap.get("dcWidth").toString());
+                final Double l = Double.parseDouble(mUnitMap.get("dcLength").toString());
                 DecimalFormat format = new DecimalFormat("###,##0.00");
 
                 TextView unitSize = (TextView) findViewById(R.id.unitSize);
                 unitSize.setText(format.format(w) + "X" + format.format(l));
+
+                TextView standardRate = (TextView) findViewById(R.id.stdRate);
+                final Double sr = Double.parseDouble(mUnitMap.get("dcStdRate").toString());
+                standardRate.setText(format.format(sr));
             }
             catch (NumberFormatException nfe)
             {
             }
+
         }
 
-        TextView standardRate = (TextView) findViewById(R.id.stdRate);
-        standardRate.setText(mUnitMap.get("dcStdRate").toString());
+        if (mWaitingMap != null)
+        {
+            if (mWaitingMap.containsKey("dcRate_Quoted"))
+            {
+                TextView quotedRate = (TextView) findViewById(R.id.quotedRate);
+                quotedRate.setText(mWaitingMap.get("dcRate_Quoted").toString());
+            }
+            if (mWaitingMap.containsKey("dNeeded"))
+            {
+                TextView needed = (TextView) findViewById(R.id.neededDate);
+                needed.setText(Helper.formatDisplayDate(mWaitingMap.get("dNeeded").toString(), "yyyy-MM-dd"));
+            }
+            if (mWaitingMap.containsKey("dFollowup"))
+            {
+                TextView followup = (TextView) findViewById(R.id.followupDate);
+                followup.setText(Helper.formatDisplayDate(mWaitingMap.get("dFollowup").toString(), "yyyy-MM-dd"));
+            }
+            if (mWaitingMap.containsKey("dExpires"))
+            {
+                TextView expires = (TextView) findViewById(R.id.expiresDate);
+                expires.setText(Helper.formatDisplayDate(mWaitingMap.get("dExpires").toString(), "yyyy-MM-dd"));
+            }
+        }
     }
 
     private class SaveReservation extends AsyncTask<Void, Void, Void>
@@ -239,8 +298,8 @@ public class ReservationActivity extends Activity
             Editable f = followup.getText();
             Editable e = expires.getText();
             String date = Helper.formatDate(needed.getText().toString(), "MM/dd/yyyy");
-            String followupDate = Helper.formatDate(f == null ? "" : f.toString(), "MM/dd/yyyy");
-            String expiresDate = Helper.formatDate(e == null ? "" : e.toString(), "MM/dd/yyyy");
+            String followupDate = f.toString().equalsIgnoreCase("") ? "1900-01-01T00:00:00" : Helper.formatDate(f.toString(), "MM/dd/yyyy");
+            String expiresDate = e.toString().equalsIgnoreCase("") ? "1900-01-01T00:00:00" : Helper.formatDate(e.toString(), "MM/dd/yyyy");
 
             //TODO validation against text
             String note = ((TextView) findViewById(R.id.reservationNote)).getText().toString();
@@ -264,14 +323,16 @@ public class ReservationActivity extends Activity
             params.put("dFollowUp", followupDate);
             params.put("sTrackingCode", ((EditText) findViewById(R.id.trackingCode)).getText());
             params.put("sCallerID", ((EditText) findViewById(R.id.callerId)).getText());
-            params.put("ConcessionID", -999);
+            params.put("ConcessionID", mConcessionId);
 
             mDataSet = ServerStuff.callSoapMethod("ReservationNewWithSource_v5", params);
             if (mDataSet != null)
             {
                 int retCode = Helper.getRtValue(mDataSet);
                 if (retCode > 0)
+                {
                     waitingId = retCode;
+                }
             }
 
             return null;
@@ -298,9 +359,9 @@ public class ReservationActivity extends Activity
                         })
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .show();*/
+                finish();
             }
 
-            finish();
         }
     }
 }
