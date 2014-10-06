@@ -1,6 +1,8 @@
 package citruscups.com.sitelinkmobile.helper;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import citruscups.com.sitelinkmobile.dataStructures.DataSet;
@@ -99,6 +101,49 @@ public class Helper
         String day = date.substring(dayStart, dayEnd);
 
         return year + "-" + day + "-" + month + "T00:00:00";
+    }
+
+    public static String formatDisplayDate(Date date, String inputFormat)
+    {
+        return formatDisplayDate(date.toString(), inputFormat);
+    }
+
+    public static String formatDisplayDate(String date, String inputFormat)
+    {
+        if (date.equals("")) return date;
+
+        int length = inputFormat.length();
+
+        int yearStart = inputFormat.indexOf("y");
+        int yearEnd = inputFormat.lastIndexOf("y", length) + 1;
+
+        int monthStart = inputFormat.indexOf("M");
+        int monthEnd = inputFormat.lastIndexOf("M", length) + 1;
+
+        int dayStart = inputFormat.indexOf("d");
+        int dayEnd = inputFormat.lastIndexOf("d", length) + 1;
+
+        String year = date.substring(yearStart, yearEnd);
+        String month = date.substring(monthStart, monthEnd);
+        String day = date.substring(dayStart, dayEnd);
+
+        return month + "/" + day + "/" + year;
+    }
+
+    public static String formatDecimal(String dcChgAmt)
+    {
+        if (isNumeric(dcChgAmt))
+        {
+            return formatDecimal(Float.valueOf(dcChgAmt));
+        }
+
+        return dcChgAmt;
+    }
+
+    public static String formatDecimal(float value)
+    {
+        DecimalFormat df = new DecimalFormat("#.##");
+        return df.format(value);
     }
 
 }
