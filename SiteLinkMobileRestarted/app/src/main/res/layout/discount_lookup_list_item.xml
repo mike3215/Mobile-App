@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:orientation="vertical"
+             android:padding="10dp"
+             android:paddingLeft="10dp"
+             android:paddingRight="10dp"
+             android:shrinkColumns="*">
+
+    <!-- Name Label -->
+    <RelativeLayout>
+
+        <TextView
+            android:id="@+id/planName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|left"
+            android:gravity="left"
+            android:paddingBottom="2dip"
+            android:text="Plan Name"
+            android:textColor="#43bd00"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/planDesc"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/planName"
+            android:gravity="left"
+            android:paddingBottom="2dip"
+            android:paddingLeft="5dp"
+            android:text="Plan Description"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="2dip"
+            android:text="Expires: "
+            android:textColor="#acacac"/>
+
+        <TextView
+            android:id="@+id/expires"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:paddingBottom="2dip"
+            android:text="Never"
+            android:textColor="#000"/>
+
+        <TextView
+            android:id="@+id/discount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="2dip"
+            android:text="X off of Charge"
+            android:textColor="#acacac"/>
+    </TableRow>
+
+    <TextView
+        android:id="@+id/concessionId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+</TableLayout>
